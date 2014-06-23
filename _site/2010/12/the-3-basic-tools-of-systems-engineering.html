@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>The 3 Basic Tools of Systems Engineering</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">The 3 Basic Tools of Systems Engineering</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Tuesday, December 07, 2010
+  </div>
+
+  <div class="post-content"><p><img class="post-lead-image" src="/teddziuba/images/if-you-ever-want-your-wife-to-come-to-a-room-turn-on-the-xbox-she-will-be-there-within-minutes-to-tell-you-to-turn-it-off.jpg">One of the most important things I learned when programming for a startup is how to design reliable systems. A startup programmer needs to understand the business economics of systems design: that the goal is to create the desired functionality, <em>not</em> to write code. Code is only incidental, and it should be the last tool you use to solve a problem.</p>
+
+<p>There are three basic tools you can use to solve a technical problem: money, time, and code. This seems obvious, but the critical point is that <strong>you must try them in that order.</strong> Out-of-order execution of these tools leads to Very Bad Things, which we will discuss later.</p>
+
+
+<h3>Money</h3>
+<p>Money is by far the best way to solve a problem because it saves time and helps you avoid writing code. You can usually use money to solve performance and scalability problems, either by buying more hardware or faster hardware. My favorite example is how solid state disk drives make disk I/O problems go away because there is no penalty for disk seek.</p>
+
+<p>At Milo, we did this when we had a database performance problem: read queries were running slowly, so we spent the money to buy a really powerful server for our database: 24 cores, 64 gigabytes of RAM, and solid state disk drives. This solved the problem for the life of the company until we were acquired. It was absolutely worth the money because we then had more time to spend building the product, and no liabilities that would come from re-architecting the data model.</p>
+
+<p>It is rare that money can completely solve the problem (or that you have enough money), but it is an easy tool to try first.</p>
+
+<h3>Time</h3>
+<p>If money doesn't work, invest time to research existing pieces of functionality that do. As I have said before, basic Unix literacy can help you know what tools are available to solve a given problem. For systems design, it helps to know what larger services are available for different classes of problems. To name a few:
+
+<ul>
+  <li>Load balancing/redundancy: HAProxy</li>
+  <li>Caching: Squid, Varnish (not Memcache because it forces you to write too much code)</li>
+  <li>Database: PostgreSQL or Oracle if you can afford it. If you're using a NoSQL database, you fucked up somewhere.</li>
+  <li>Database replication: Slony-I</li>
+  <li>Full-text search: PostgreSQL, Solr (warning: if you use Solr the way I think you will, you will have multiple points of truth in your system)</li>
+  <li>Queueing: if you're using a queue, again, you fucked up somewhere.</li>
+  <li>Logging: syslog, and nothing else. Ever.</li>
+</ul>
+</p>
+
+<p>It seems obvious, but sometimes it needs to be stated: use other peoples' work to accomplish your goals. Well-known open source packages are very high quality, and are far more reliable than anything you could build yourself. Even a 90% solution off the shelf is worth it because of the time you save in maintenance.</p>
+
+<h3>Code</h3>
+<p>Writing code is the last resort for solving a problem. Code is a versatile enough tool that you can make it solve just about any problem, but every line is a liability. It's design, future maintenance, monitoring, testing and profiling. Write code only when you have proven categorically that money and third party software don't work.</p>
+
+<p>As a side note, when you are testing the code, I have found that unit testing is a losing investment. Acceptance tests, however, are the most cost effective way to manage the risk that new code introduces, in terms of time spent developing.</p>
+
+<h3>Using the Tools Out of Order</h3>
+<p>The worst thing you can do is to try the <em>code</em> tool first, without considering money or time. This is called <strong>technical masturbation</strong> and it can sink a project in a hurry.</p>
+
+<p>When the first thing you do is dive into code, you are dooming yourself to either designing an unmaintainable system, or to reinvent existing tools poorly. This may be acceptable in an academic or research setting, but in a startup, it's downright foolish. You may be able to deploy your system faster if you code it all yourself, but it will be a monkey on your back for its entire lifetime. PostgreSQL has never woken me up in the middle of the night with a segmentation fault or NullPointerException, but databases I've written myself have.</p>
+
+<p>Functionality is an asset, but code is a liability. I will say this until you like it.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

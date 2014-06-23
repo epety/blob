@@ -1,0 +1,12 @@
+---
+layout: default
+---
+
+<div class="post-container">
+  <h2 class="post-title"><a href="{{ post.url }}">{{ page.title }}</a></h2>
+  <div class="byline">
+    by Ted Dziuba on {{ page.date | date: "%A, %B %d, %Y" }}
+  </div>
+
+  <div class="post-content">{{ content }}</div>
+</div>

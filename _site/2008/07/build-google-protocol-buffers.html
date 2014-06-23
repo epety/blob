@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Build Google Protocol Buffers Without Maven</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Build Google Protocol Buffers Without Maven</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Monday, July 07, 2008
+  </div>
+
+  <div class="post-content"><img alt="trippin_balls.jpg" src="/teddziuba/images/trippin_balls.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="208" width="225" />Google released <a href="http://code.google.com/p/protobuf/">protocol buffers</a> as open source, which, with a proper transport, will give both XML-RPC and <a href="http://developers.facebook.com/thrift/">Thrift</a> a run for their money.<br /><br />Anyway, it's kind of a pain in the balls to build the Java version.&nbsp; If you import the Java source into Eclipse, it's got all sorts of build errors, all stemming from a missing file: <code>DescriptorProtos.java</code>.<br /><br />If you've got Maven installed, it will make <code>DescriptorProtos.java</code> for you (this file is generated via <code>protoc</code>).&nbsp; But Maven is stupid, because it didn't work immediately after <code>apt-get install</code> and I couldn't figure out how to fix it within 30 seconds.&nbsp; I have no patience for this kind of bullshit.<br /><br />So, to build <code>DescriptorProtos.java</code> without Maven, you make it by hand:<br /><br /><pre>protoc --java_out=/home/ted/some_directory \ <br />/path/to/protobufsrc/src/google/protobuf/descriptor.proto</pre>(You already compiled <code>protoc</code>, didn't you?)<br /><br />Drop the output file into Eclipse and protocol buffers will build.&nbsp; There are still a bunch of compilation warnings, but only chumps listen to those.<br /><div><br /></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

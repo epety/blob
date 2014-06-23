@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>The Most Important Concept in Systems Design</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">The Most Important Concept in Systems Design</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Thursday, June 30, 2011
+  </div>
+
+  <div class="post-content"><p><img src="/teddziuba/images/the-other-knowledge-i-will-bestow-is-to-never-squander-an-opportunity-to-piss.jpg" class="post-lead-image"/>
+
+About a year ago, I hit a turning point in my career as a programmer after reading <em><a href="http://www.catb.org/~esr/writings/taoup/html/">The Art of Unix Programming</a></em> by Eric S. Raymond. It was written before web apps became popular, but everything in it still applies. ESR tries to communicate the Unix Way to programmers, and if you can read and understand that book, you'll have an <em>A-HA!</em> moment where, for just for a second, everything will make sense. It's kind of like the first time you smoke pot and realize that everyone and everything are made out of atoms, or the first time you figure out how fuckin' magnets work.
+</p>
+
+<p>Then, of course, the understanding is gone, and you spend a long time trying to get it back.</p>
+
+<p>If you don't feel like reading it, the most important take-away for web programmers is the <strong>Single Point of Truth Rule</strong>, that is, <em>"every piece of knowledge must have a single, unambiguous, authoritative representation within a system"</em>. If you design a system that violates this rule, you are setting yourself up for endless headaches and disasters.</p>
+
+<h3>Stuff You Need to Stop Doing</h3>
+
+<p>There are a couple of really common SPOT violations I've seen in the web world, and they almost all revolve around misconceptions about databases. No, wait, strike that. Almost every SPOT violation I've seen stems, in one way or another, from MySQL's failure at being a database. Actually, most of the NoSQL catastrophe is a product of MySQL's perverse representation of the SQL spec, but that's not the drum I'm here to beat.</p>
+
+<h4>1. Using Solr to Search a Database</h4>
+
+<p>I know you have all gone through this same thought process at least once. I've gone through it twice. You need to add search to your database-backed website, and decide to use Apache Solr. You set up an "indexing pipeline" that either sucks information from your database regularly and throws it into Solr, or you have a single entry point for inserts/updates that updates the DB as well as Solr.</p>
+
+<p>The problem is that your application doesn't know what the single point of truth for records is.  If results come back from Solr, do you display the data that came from the search index? Do you take those row IDs, query the database, and then display the DB-backed data? Any way you try to solve this problem, it gets painful.  And, oh Jesus, what happens if your indexing bridge program fails? How long will it go on failing before you notice that something is wrong?</p>
+
+<p><strong>The Solution: </strong> <em>Don't do that.</em> PostgreSQL actually has pretty awesome full-text search capabilities. You can layer your query tuning on top of it if you like; that doesn't violate SPOT. Hell, you could even use Solr as your database, if it will satisfy the requirements.</p>
+
+<h4>2. Precaching SQL Results in a NoSQL System</h4>
+<p>This is somewhat less common, but still happens. You've got all your data in MySQL with a great object-relational model, but querying it from your web app involves a 3 or 4 way JOIN, which causes MySQL to choke, as it hasn't yet learn how to open its throat all the way. So, to fix it, you precompute some data structures and store them in something like Memcached or Redis.</p>
+
+<p>Durr, what if something changes? Do you recompute the data structure on the fly? Update the NoSQL and queue the SQL write for later? You can rig up something so that it appears to work, but as soon as your "sync" script stops running, you're proper fucked, because you can't be sure which representation of the data is authoritative.</p>
+
+<p><strong>The Solution: </strong> <em>Don't do that.</em> If your authoritative DB is too slow, either re-jigger your data model or change databases to one that will work. If you truly want to add a caching layer to your application, do it at the outer-most point, that is, in front of your web servers. In my experience, any attempt to cache below the presentation layer just leads to consistency disasters. Plus, caching at the edge is easy: you can use Squid or a commercial content delivery network.</p>
+
+<h4>3. Frankendatabases</h4>
+<p>OK, I've spit enough truth about MySQL. This is a problem that I've recently had to design around: you have information from multiple databases that you want to query in one database. If you work with a legacy system, you know what I'm talking about. There's such a sweaty-palmed temptation to write a sync script to pull data from database A, database B, and update records in your database.</p>
+
+<p>You get yourself into logic like this:</p>
+
+<blockquote>
+<pre>
+my_record = query("SELECT * FROM records WHERE id = x")
+if not my_record:
+  insert_into_my_db(their_record)
+elif their_record != my_record:
+  update_my_db(their_record)
+</pre>
+</blockquote>
+
+<p>This is a consistency nightmare, among other things. If the sync script breaks, blah blah blah, if you need to write <em>new</em> records to your DB, you're just making the problem worse for the next guy who needs to do something similar, and of course, this will turn into a shit-ton of queries at update-o-clock.</p>
+
+<p><strong>The Solution:</strong> You guessed it: <em>Don't do that.</em> Do your best to canonically consolidate the databases. Sometimes this isn't practical in legacy systems, so avoid the aggregation DB if you can - query both A and B directly. If you can't that, then hide your shame somewhere out of the way.</p>
+
+<h3>A Sign That You're Doing it Wrong</h3>
+
+<p>In general, if you find yourself writing a lot of plumbing code, or "updater" scripts, or if your crontab is longer than like 10 lines, chances are you've fucked up and have a SPOT violation somewhere in your architecture. Writing code like that that is tedious and painful, and pain is generally a sign that you should stop doing something.</p>
+
+<p>So stop doing that.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

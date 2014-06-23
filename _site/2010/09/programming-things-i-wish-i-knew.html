@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Programming Things I Wish I Knew Earlier</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Programming Things I Wish I Knew Earlier</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, September 04, 2010
+  </div>
+
+  <div class="post-content"><img src="/teddziuba/images/racial-slurs-make-for-a-pretty-awesome-server-naming-convention.jpg" class="post-lead-image">
+<p>Programming in a startup is much different than programming at a big company. At a startup, not only are you the developer, but you are also the systems administrator for the most part.  I've been startupping for three years now, and have had my ass kicked enough times to step back and think that maybe I should learn how to do things the right way rather than try to bludgeon my way through with raw intellect.</p>
+
+<p>These are the things I wish I had known in the beginning, or at least I wish I hadn't been too subborn to learn.</p>
+
+
+<h3>How To Avoid Over Complicating</h3>
+<p>Like most software people, I have a natural tendency to over-engineer things. To help fight this urge, I've come up with two simple rules to help myself avoid most of it:</p>
+
+<h4>If you are writing a program that touches more than two persistent data stores, it is too complicated.</h4>
+<p>And the the hard disk counts as a persistent data store. This is kind of a reinterpretation of the Unix way of having small tools with a single input and single output.  Tracking state across many different persistent stores and handling failure cases is just too much for one program to do.</p>
+
+<h4>If Linux can do it, you shouldn't.</h4>
+<p>Don't use Hadoop MapReduce until you have a solid reason why <code>xargs</code> won't solve your problem. Don't implement your own lockservice when Linux's advisory file locking works just fine. Don't do image processing work with PIL unless you have proven that command-line ImageMagick won't do the job.  Modern Linux distributions are capable of a lot, and most hard problems are already solved for you. You just need to know where to look.</p>
+
+
+<h3>Parallelize When You Have To, Not When You Want To</h3>
+<p>I know it seems obvious, but sometimes I need to tell myself explicity: if the physical machine is not the bottleneck, do not split the work to multiple physical machines. It is usually pretty apparent when you have to parallelize a CPU bound job, but for I/O bound stuff, you have to do some more in-depth measurement.</p>
+
+<p>For example, if you are doing web crawling, and you have not saturated the pipe to the internet, then it is not worth your time to use more servers. <a rel="nofollow" href="http://measuringmeasures.com/blog/2010/8/16/clojure-workers-and-large-scale-http-fetching.html">This guy</a> got me thinking about it, he's doing "Large-scale HTTP fetching" in Clojure. He talks about parallelizing with some queueing silliness, but never mentions how much data is moving down the pipe on any one machine. If you have a 100 megabit connection to the internet, and your fetcher is using 700 kilobits, then figure out why your fetcher sucks. (As a side note, I was talking about that post with Milo's prolific systems administrator, and we could not figure out whether the author was an incredibly elaborate troll or just a run-of-the-mill idiot.)</p>
+
+
+<p>This tidbit also goes for data storage. I know Cassandra is all neat and whiz-bang, but I can pretty much guarantee that you don't need it. Multi-terabyte drives are cheap, and PostgreSQL is a known quantity. It's just not worth the risk.</p>
+
+<h3>How to Babysit a Process</h3>
+<p>This is one I only recently learned. If you have a process running and you want it to be restarted automatically if it crashes, use <a href="http://upstart.ubuntu.com/">Upstart</a>. Upstart is a replacement for the init daemon that can do a lot of cool things, one of which is restart a process if it crashes. An example Upstart config to do this would look like this:</p>
+
+<pre>
+respawn              # Respawn this process if it dies
+
+respawn limit 10 600 # If you have to respawn 10 times 
+                     # in 10 minutes, give up
+
+exec python /path/to/my/program.py
+</pre>
+
+
+<h3>NoSQL is NotWorthIt</h3>
+<p>I've <a href="/teddziuba/2010/03/i-cant-wait-for-nosql-to-die.html">talked a lot of shit on NoSQL</a> in the past, but I recently decided to see if I had been living a lie. I tried to use Redis for some not-as-mission-critical systems at Milo - applications where data loss is not that big of a deal. Redis, even though it's an in-memory database, has a virtual memory feature, where you can cap the amount of RAM it uses and have it spill the data over to disk. So, I threw 75GB of data at it, giving it a healthy amount of physical memory to keep hot keys in.</p>
+
+<p>For the most part things went smoothly, until it hit the wall. The Redis server would hang, accepting new sockets, but not servicing any requests. Replication stopped working.  When re-starting the server, it would take forty-five minutes (!) from invocation time before it was ready to serve requests.</p>
+
+<p>To nobody's surprise, I was right. Redis was an unknown quantity, both in how much data it could store reliably and how performance degraded. Yes, maybe things could have been different if I used Cassandra or MongoDB, but the point is the same: <em>newfangled stuff is not worth the risk</em>, especially if something like PostgreSQL can do the same job.</p>
+
+
+<h3>Event Loops are Just Okay</h3>
+
+<p>One of the most positively retarded things I've ever read comes out of the node.js home page, describing why nonblocking I/O is so great:</p>
+
+<blockquote>
+Almost no function in Node directly performs I/O, so the process never blocks. Because nothing blocks, less-than-expert programmers are able to develop fast systems.
+</blockquote>
+
+<p>Statements like this give me The Fear. Nothing ever blocks, huh? What about the callback that Node runs for new requests? If that does any CPU work, it sure as hell blocks. If each callback does 100 milliseconds of CPU work, then the Node server will only be able to handle 10 requests/sec as a theoretical maximum, because the event loop doesn't pick up new requests until the callback is complete.  Scalability indeed.</p>
+
+
+<p>Nothing is more dangerous than a programmer who doesn't know what he doesn't know. Event loops work well if your server is heavily I/O bound, whereas if the server needs to do some nontrivial CPU work, you may be better off with threads. Hell, you can even use both, like Nginx does (well, worker processes, at least), to hold lots of sockets open but still do CPU work asynchronously.</p>
+
+<p>The point is, evented I/O is not magic scalability pixie dust, and like anything, there is a tradeoff.</p>
+
+
+<h3>Hardware Matters</h3>
+<p>Cloud computing was built for suckers by hustlers. The physical machine your programs run on can make all the difference in the world when it comes to performance and reliability. I am not talking about using an Extra Large EC2 instance for your database because it's "beefier", I am talking about understanding down-to-the-metal, what the performance characteristics of a system are.</p>
+
+<p>For example, in a heavy write throughput application, you want <code>fsync()</code> to return as quickly as possible. (For those of you using MongoDB, <code>fsync()</code> is the system call a program makes to synchronize writes to disk). To the software, <code>fsync</code> is a black box that you can't muddle with, that is, unless you have your shit together in the hardware. If you spend the extra money on a battery-backed RAID controller, <code>fsync</code> can return almost immediately, because the controller can hold writes in battery-backed memory and guarantee that they will be flushed to disk, even in the event of a power failure. On a database machine, you will see a significant write performance increase if you use the correct hardware.</p>
+
+<p>Suppose again that you are serving data from disk in a heavy read throughput application. Data is accessed randomly, so to service those requests, the disk's read heads are scurrying about the platters constantly.  With EC2, when Amazon says "I/O performance: High", what does that even mean? Is that suitable for a heavy random read scenario?  Again, knowing your shit when it comes to hardware is valuable here. Solid-state hard disks, while expensive, have unbelievable random read performance. (Their sequential read performance isn't amazingly better than spinning disks, though) Spending the extra money on SSD drives is almost always a win, if you have an disk bound problem.</p>
+
+<p>Hardware is one of the best places to put capital to work. It is far more efficient to buy your way out of a performance problem than it is to rewrite software. When running your app on commodity hardware, don't expect anything better than commodity performance.</p>
+
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>I Can't Wait for NoSQL to Die</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">I Can't Wait for NoSQL to Die</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Thursday, March 04, 2010
+  </div>
+
+  <div class="post-content"><img alt="trolling-chatroulette-with-pictures-of-suicide-scenes-will-never-stop-being-funny.jpg" src="/teddziuba/images/trolling-chatroulette-with-pictures-of-suicide-scenes-will-never-stop-being-funny.jpg" width="335" height="224" class="post-lead-image" style="float: right; margin: 0 0 20px 20px;" />They don't teach you this in college, but the fundamental theorem of the software industry is the idea that everything needs to be rewritten all the time. &nbsp;As a corollary, web startup engineers believe that there is no problem but scalability, &nbsp;and architecture is its solution. And thus, the NoSQL movement was born.<div><br /></div><div>The idea is that object relational databases like MySQL and PostgreSQL have lapsed their useful lifetimes, and that document-based or schemaless databases are the wave of the future. Never mind of course that MySQL was the perfect solution to everything a few years ago when Ruby on Rails was flashing in the pan. Never mind that <i>real</i>&nbsp;businesses track all of their data in SQL databases that scale just fine. (For Silicon Valley readers, Walmart is a <i>real business</i>, Twitter is not.)</div><div><br /></div><div>Invariably, all web projects start off with something like Rails or Django, most likely backed by MySQL. The data relationships are easy to model, and the application works well. &nbsp;If you are lucky enough that people actually <i>use</i>&nbsp;your application, eventually you will start to see some performance issues. At this point, a developer who values technological purity over gettin' shit done will advocate "rewriting the whole thing in a weekend using Cassandra". &nbsp;And if he's smart enough, he might just pull it off. (Of course, said developer has only migrated the <i>app</i>&nbsp;to use a different data store - all of the ancillary support code was conveniently ignored)</div><div><br /></div><div>So you've magically changed your backend from MySQL to Cassandra. Stuff will just work now, right? Well, no. Did you know that Cassandra requires a restart when you change the column family definition? Yeah, the MySQL developers actually had to think out how ALTER TABLE works, but according to Cassandra, that's a hard problem that has very little business value. Right.</div><div><br /></div><div>I'm not just singling out Cassandra - by replacing MySQL or Postgres with a different, new data store, you have traded a well-enumerated list of limitations and warts for a newer, poorly understood list of limitations and warts, and <i>that</i>&nbsp;is a huge business risk.</div><div><br /></div><div><img alt="one-skill-all-junior-developers-lack-is-knowing-how-to-tell-your-boss-to-fuck-off.jpg" src="/teddziuba/images/one-skill-all-junior-developers-lack-is-knowing-how-to-tell-your-boss-to-fuck-off.jpg" width="250" height="287" class="mt-image-left" style="float: left; margin: 0 20px 20px 0;" /></div><div><b>You Are Not Google</b></div><div><b><br /></b></div><div>The sooner your company admits this, the sooner you can get down to some real work. &nbsp;Developing the app for Google-sized scale is a waste of your time, plus, there is no way you will get it right. Absolutely none. It's not that you're not smart enough, it's that you do not have the experience to know what problems you will see at scale.</div><div><br /></div><div>Besides, did you know that Google Adwords is <a href="http://en.wikipedia.org/wiki/AdWords#Technology">implemented on top of MySQL</a>? &nbsp;What, that business critical code that operates at massive scale doesn't use BigTable? No, in fact there is such enormous value in sticking with what works that Google identifies problems with InnoDB at scale and submits patches, instead of saying "MySQL doesn't scale, let's dump it for something else".</div><div><br /></div><div>NoSQL will never die, but it will eventually get marginalized, like how Rails was marginalized by NoSQL. &nbsp;In the meantime, DBAs should not be worried, because any company that has the resources to hire a DBA likely has decision makers who understand business reality.</div><div><br /></div><div><span style="font-size: 0.8em; ">Top photo credit <a rel="nofollow" href="http://www.paulrussell.info/">Paul Russell</a></span></div>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

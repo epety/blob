@@ -1,0 +1,138 @@
+/* "Mixed Emotions" on Kuler */
+
+body {
+    background-color: #E4E4E4;
+}
+
+
+#top-bar {
+    background: url("/teddziuba/images/top-bar-bg.png") repeat-x;
+    height: 30px;
+}
+
+
+#blog-name {
+    line-height: 24px;
+    color: white;
+    font-family: "Droid Sans", sans-serif;
+    margin: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    text-shadow: 1px 1px #252626;
+}
+
+#top-container {
+    height: 30px;
+}
+
+#header a {
+    text-decoration: none;
+}
+
+
+#header a:visited {
+    color: white;
+}
+
+#container {
+    background-color: #F7F7F7;
+    border: 1px solid #AFAEAE;
+    margin-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+}
+
+.post-title {
+    color: #26282D;
+    font-family: "Droid Sans", sans-serif;
+    font-weight: bold;
+    font-size: 2.2em;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar {
+    background: url("/teddziuba/images/post-container-gradient.png") repeat-x;
+    background-color: gainsboro;
+    padding: 15px;
+    border: 1px solid #A19DA1;
+    float: right;
+    margin-top: 20px;
+    box-shadow: 1px 1px 3px #6F6F6F;
+    -moz-box-shadow: 1px 1px 3px #6F6F6F;
+    -webkit-box-shadow: 1px 1px 3px #6F6F6F;
+}
+
+#sidebar h3 {
+    color: #26282D;
+    font-family: "Droid Sans", sans-serif;
+    font-weight: bold;
+    font-size: 1.5em;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar ul {
+    list-style: none;
+    font-weight: bold;
+    font-family: "Droid Sans", sans-serif;
+}
+
+#sidebar li {
+    margin-left: 2px;
+}
+
+#sidebar a {
+    text-decoration: none;
+}
+
+.byline {
+    font-size: 1.3em;
+    font-weight: bold;
+    font-family: "Droid Sans", sans-serif;
+    margin-bottom: 20px;
+}
+
+.post-container {
+    background: url("/teddziuba/images/post-container-gradient.png") repeat-x;
+    background-color: gainsboro;
+    padding: 15px;
+    border: 1px solid #A19DA1;
+    margin-top: 20px;
+    box-shadow: 1px 1px 3px #6F6F6F;
+    -moz-box-shadow: 1px 1px 3px #6F6F6F;
+    -webkit-box-shadow: 1px 1px 3px #6F6F6F;
+
+}
+
+.post-content {
+    font-family: "Gill Sans", Arial, sans-serif;
+    line-height: 21px;
+    font-size: 14px;
+}
+
+.post-title a, .post-title a:visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+.post-lead-image {
+    float: right;
+    margin: 7px;
+}
+
+blockquote {
+    border-left: 2px solid #252626;
+    padding-left: 15px;
+    margin-left: 30px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+img.centered {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}

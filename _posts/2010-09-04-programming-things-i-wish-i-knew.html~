@@ -1,0 +1,24 @@
+---
+layout: post
+title: Programming Things I Wish I Knew Earlier
+---
+
+<h3>Use Unix</h3>
+<p>Not in the Windows-vs-Unix sense, but in the know-your-tool sense. Want to process a bunch of stuff on disk.</p>
+
+<h3>Parallelize When You Have To, Not When You Want To</h3>
+<p>I know it seems obvious, but sometimes I need to tell myself explicity: if the physical machine is not the bottleneck, do not split the work to multiple physical machines. It is usually pretty obvious when you have to parallelize a CPU bound job, but for I/O bound stuff, you have to do some more in-depth measurement.</p>
+
+<p>If you are doing web crawling, and you have not saturated the pipe to the internet, then it is not worth your time to use more servers. Take <a rel="nofollow" href="http://measuringmeasures.com/blog/2010/8/16/clojure-workers-and-large-scale-http-fetching.html">this guy</a> for example, who is doing "Large-scale HTTP fetching" in Clojure. He talks about parallelizing with some queueing silliness, but never mentions how much data is moving down the pipe on any one machine. If you have a 100 megabit connection to the internet, and your fetcher is using 700 kilobits, then figure out why your fetcher sucks. (As a side note, I was talking about that post with Milo's prolific systems administrator, and we could not figure out whether the author was an incredibly elaborate troll or just a run-of-the-mill idiot.)</p>
+
+<p>The most useful bit of advice I learned from my stint at Google was this: <em>it is easier to move computation than it is to move data</em>. So, when it comes time to parallelize anything, consider I/O to be the enemy.</p>
+
+
+<h3>Hardware Matters</h3>
+<p>Cloud computing is a joke. The physical machine your programs run on can make all the difference in the world when it comes to performance and reliability. I am not talking about using an Extra Large EC2 instance for your database because it's "beefier", I am talking about understanding down-to-the-metal, what the performance characteristics of a system are.</p>
+
+<p>For example, in a heavy write throughput application, you want <code>fsync()</code> to return as quickly as possible. (For those of you using MongoDB, <code>fsync()</code> is the system call a program makes to synchronize writes to disk). To the software, <code>fsync</code> is a black box that you can't muddle with, that is, unless you have your shit together in the hardware. If you spend the extra money on a battery-backed RAID controller, fsync can return almost immediately, because the controller can hold writes in battery-backed memory and guarantee that they will be flushed to disk, even in the event of a power failure. On a database machine, you will see a significant write performance increase by using the correct hardware.</p>
+
+<p>Suppose again that you are serving data from disk in a heavy read throughput application. Data is accessed randomly, so you won't win with sequential read performance on a spinning disk. The read head is still scurrying about the platter to serve data.  When Amazon says "I/O performance: High", what does that even mean? Is that suitable for a heavy random read scenario?  Again, knowing your shit when it comes to hardware is valuable here. Solid-state hard disks, while expensive, have unbelievable read performance. Spending the extra money on SSD drives is almost always a win, if you have an I/O bound problem.</p>
+
+<p>Hardware is one of the best places to put capital to work. It is far more efficient to buy your way out of a performance problem than it is to rewrite software. When running your app on commodity hardware, don't expect anything better than commodity performance.</p>

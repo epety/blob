@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Straight Talk on Event Loops</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Straight Talk on Event Loops</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Tuesday, October 04, 2011
+  </div>
+
+  <div class="post-content"><p><img src="/teddziuba/images/the-node-js-community-is-now-on-auto-troll.jpg" class="post-lead-image">Two days ago, I <a href="/teddziuba/2011/10/node-js-is-cancer.html">pointed out</a> how Node.js, an event-driven web framework,
+will eat it hard if it's given any nontrivial amount of CPU work to do in its request handler. After I published that,
+it seemed that the <em>point</em> of the article went sailing right past the Node.js camp, who proceeded to see how
+fast they can make a Fibonacci number generator.</p>
+
+<p>The Fibonacci function was arbitrary. It was inefficient on purpose. I needed a function that would use CPU time,
+and chose that because it's familiar and easy to implement. So, now I offer a more formal analysis of what CPU usage
+does to the throughput of an event-driven system as compared to a threaded system.</p>
+
+<p>Since it's now clear that reading comprehension and critical thinking are not strong suits of the Node.js programmer, I would suggest
+that all Noders reading this article read it aloud, slowly and loudly, like an American tourist trying to find a train
+station in Tokyo.  Furthermore, to assist the Node camp, I will highlight the important parts in large lettering,
+like this:</p>
+
+<h5><img src="/teddziuba/images/nodejs.png">When the weather is threatening rain, bring an umbrella with you.</h5>
+
+<h3>A Math Model of Throughput</h3>
+<p>Assume we've got a request handler that processes an HTTP request and sends back the result. Let's see how threads and event loops differ on processing these requests. Note that we're measuring
+<em>throughput</em> here, not <em>latency</em>. That's an article for another day.</p>
+
+<h5><img src="/teddziuba/images/nodejs.png">This is an analysis of Queries Per Second (QPS) only.</h5>
+
+<p>Let's start with some definitions:</p>
+
+<ul>
+  <li>Let <strong><em>C</em></strong> be the amount of CPU time used by the handler, in milliseconds.</li>
+  <li>Let <strong><em>I</em></strong> be the amount of I/O time used by the handler, in milliseconds.</li>
+  <li>Let <strong><em>W</em></strong> be the wall clock time it takes for a handler to execute.
+    By definition, <strong><em>W = I + C</em></strong></li>
+  <li>Let <strong><em>N</em></strong> be the number of threads running in the threaded system.</li>
+  <li>Let <strong><em>E</em></strong> be the throughput of the event driven system.</li>
+  <li>Let <strong><em>T</em></strong> be the throughput of the threaded system.</li>
+</ul>
+
+<p>Given that the times are measured in milliseconds, we can define <img src="/teddziuba/images/node/eq1.png"> and <img src="/teddziuba/images/node/eq2.png">.</p>
+
+<p>Since the wall time <em><strong>W</strong></em> is expressable in terms of CPU time <em><strong>C</strong></em> and I/O time <em><strong>I</strong></em>,
+and considering that both <em><strong>C</strong></em> and <em><strong>I</strong></em> are positive, nonzero, it is helpful define <img src="/teddziuba/images/node/eq3.png">, with the factor <em><strong>k</strong></em> expressing the relationship between <em><strong>C</strong></em> and <em><strong>I</em></strong>.</p>
+
+<p>It follows then that <img src="/teddziuba/images/node/eq4.png"> and <img src="/teddziuba/images/node/eq5.png">.</p>
+
+<p><strong>THEOREM 1.</strong> When a handler takes more CPU time than I/O time, an event-driven system has greater throughput than a threaded system if and only if the threaded system has exactly one thread.</p>
+
+<p><em>PROOF (partial).</em> <small>(note: for brevity, I will only prove one direction. The other direction is an exercise left for the reader.)</small></p>
+
+<p>Suppose <img src="/teddziuba/images/node/eq6.png"></p>
+<p>Simplifying the inequality, <img src="/teddziuba/images/node/eq7.png"></p>
+<p>Given that <img src="/teddziuba/images/node/eq8.png">, we can bound the inner term <img src="/teddziuba/images/node/eq9.png"></p>
+<p>Further simplifying <img src="/teddziuba/images/node/eq10.png"></p>
+
+<p>Since <em><strong>N</strong></em> is integral and nonzero, it follows that <img src="/teddziuba/images/node/eq11.png">.</p>
+
+<h5><img src="/teddziuba/images/nodejs.png">If you do more CPU than I/O, use threads.</h5>
+
+<p><strong>THEOREM 2.</strong>When the handler takes more I/O time than CPU time, an event-driven system has greater throughput than a threaded system if and only if <img src="/teddziuba/images/node/eq12.png">.</p>
+
+<p><em>PROOF (partial).</em><small>(note: again for brevity, I will prove one direction).</small></p>
+<p>Given our previous construction, <img src="/teddziuba/images/node/eq7.png"></p>
+<p>and the alternate expression <img src="/teddziuba/images/node/eq13.png"></p>
+<p>it follows that <img src="/teddziuba/images/node/eq14.png">.</p>
+
+<h5><img src="/teddziuba/images/nodejs.png">If you do more I/O than CPU, use more threads.</h5>
+
+<h3>A Practical Example</h3>
+
+<p>Let's suppose you have a request handler that does 10 milliseconds of CPU work and 50 milliseconds of database I/O. Would you choose threads or events?</p>
+
+<p>I this case, the theoretical maximum throughput of the event driven system is <em><strong>1000/10 = 100 QPS</strong></em>, where as a threaded system with 50 threads has a theoretical maximum throughput of <em><strong>50,000/60 = 833.33 QPS</strong></em>. Of course, in the threaded case, you need to worry about being bound by the CPU, but given the number of cores on modern hardware, threads seems like a winner here.</p>
+
+<h3>Multiple Event Workers</h3>
+
+<p>The Noders got really into this one: forking "workers" from your event loop to do the heavy CPU work, and having them call back to the event loop when they're done. One parent process coordinates work among many children? Where have I heard that before?</p>
+
+<p>Anyhow, let's extend the model to that case. Just for funsies.</p>
+
+<p>Since your asynchronous processes do not block on I/O, at full utilization, they will theoretically take 100% of the CPU. Therfore, the number of worker processes to spawn must be equal to the number of CPUs in the system to avoid oversubscribing the machine. Let's introduce a new variable, <em><strong>M</strong></em>, to represent the number of CPUs in the computer.</p>
+
+<p>The throughput formula for the event driven system therefore becomes <img src="/teddziuba/images/node/eq15.png"></p>
+
+<p>Now, with threads, we also need to avoid oversubscribing the CPU. Considering that during a single handler execution, only <em><strong>C</strong></em> milliseconds of CPU are used, it follows that the number of threads that will achieve theoretical maximum utilization is <img src="/teddziuba/images/node/eq16.png">.</p>
+
+<p>Our formula for the threaded system's throughput is therefore <img src="/teddziuba/images/node/eq17.png"></p>
+
+<p>...but look at this: <img src="/teddziuba/images/node/eq18.png"></p>
+
+<h5><img src="/teddziuba/images/nodejs.png">At full utilization, threads and events have the same theoretical throughput.</h5>
+
+<p>This makes intuitive sense, as if the CPUs are working as hard as they can, all else equal, they should yield the same performance regardless of the framework used.</p>
+
+<h5><img src="/teddziuba/images/nodejs.png">Hold up, this does not prove that Node is good.</h5>
+
+<p>Of course, in a practical setting, threads have a greater memory overhead, and programming an event loop with multiple workers just seems silly, as if you're doing that much CPU work in an event looped system, you've already fucked up somewhere, so why add to it?</p>
+
+<h3>Node.js Is Still Cancer</h3>
+<p>So, let's review.</p>
+
+<p>Suppose you're a less-than-expert programmer, which Node seems to attract in droves for some reason. You are using Node for the supposed "scalability" of it, but as we have just seen, threaded programming, which is easier to understand than callback driven programming, meets or exceeds the asynchronous model in the vast majority of cases. Chances are, you're not going to be forking worker processes to do CPU jobs, what with the less-than-expert and all.</p>
+
+<p>Therefore, the reason you're using Node is not a lack of technical ability, it's because all the cool kids are doing it.</p>
+
+<h5><img src="/teddziuba/images/nodejs.png">Node.js is a danger to novice programmers.</h5>
+
+<p>Next, suppose you're an expert programmer, and you've got some CPU bound work that you fork off to child processes to keep your event loop trucking. OK man, how complicated do you want to make this thing? At full capacity, you're at par with threads, provided it's not memory bound. At this point, you are less focused on solving the problem at hand than you are on coming up with something you can blog about and get on programming Reddit.</p>
+
+<h5><img src="/teddziuba/images/nodejs.png">If you're forking workers in Node, you've got bigger problems.</h5>
+
+<p>Plus, it's fucking <em>JavaScript</em> ... on the <em>server</em>.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

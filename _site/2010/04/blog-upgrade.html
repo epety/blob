@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Blog Upgrade</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Blog Upgrade</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Sunday, April 04, 2010
+  </div>
+
+  <div class="post-content"><img src="/teddziuba/images/government-bailouts-prove-that-investment-banking-is-now-graded-on-a-curve.jpg" class="post-lead-image">
+
+<p>So that's it, I'm finally done with Movable Type. I had upgraded my
+  4.x install to the newest 5.x, and the process was nothing but a
+  colossal fuckup. After the fact, my site was compromised 4 times by
+  my last count &mdash; some bot set up a handful of phishing pages
+  here. RSA security caught it, notified Dreamhost, and they shut me down a
+  couple of times.</p>
+
+<p>Anyhow, rather than figure out the attack vector with Movable Type,
+  I decided to scrap it and
+  use <a href="http://github.com/mojombo/jekyll" rel="nofollow">Jekyll</a>. It only took me a day and a
+  couple of angry Python scripts to migrate all my shit to Jekyll from
+  MT. Comments are still off because I don't care in the slightest
+  what people have to say, and certainly not enough to slow my stuff
+  down with Javascript.</p>
+
+<p>One of the reasons I used MT in the first place was that it
+  generated static HTML pages for all posts, instead of doing
+  something silly like querying a database to generate what amounts to
+  static content. Because of this, my pages load (first request to
+  final render) in about 300
+  milliseconds on my home connection. For comparison, techcrunch.com
+  can take upwards of 1 minute from first request to final render.</p>
+
+<p>In this regard, Jekyll feels right. I can keep everything under
+  version control, the templating is only marginally braindead, and
+  the publishing step is rsync. After using Jekyll, I feel like every
+  other blogging engine out there is telling me, <em>"You'll shoot
+  your eye out, kid!"</em>.</p>
+
+<p>It's also come to my attention that the re-do with Jekyll has
+  caused my posts to show up afresh in all of your Google Reader
+  accounts. This was unintentional, but a nice benefit. It's true,
+  this is the greatest web site on the internet, and everything you
+  need to know, you can find out here.</p>
+
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

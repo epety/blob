@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>MacOS X is an Unsuitable Platform for Web Development</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">MacOS X is an Unsuitable Platform for Web Development</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Sunday, March 27, 2011
+  </div>
+
+  <div class="post-content"><p><img class="post-lead-image" src="/teddziuba/images/you-never-have-questions-about-whether-linux-users-are-male-or-female.jpg">Part of the process of becoming a new eBay employee is selecting your company laptop. I was offered a choice: Lenovo Thinkpad or MacBook Pro. Coming from a Linux development world, I picked the Mac, thinking it would be closer to what I am used to. </p>
+
+<p>Man, did I fuck up.</p>
+
+<p>Thankfully, I still have my Ubuntu workstation to get <em>real work</em> done on, but the Mac does it duty &mdash; running Outlook, maybe Firefox or Google Chrome every now and then. Oh, I also have VMWare installed on it so I can boot Windows to browser test in Internet Explorer.  I should have picked the PC, at least then I would save myself the step of booting VMWare.</p>
+
+<p>So what's wrong with using the Mac as a development machine for Milo, a Python application backed by PostgreSQL and Redis (or any web project, for that matter)? Well, sacred cow, here come the spears.</p>
+
+<h3>Horrific package management</h3>
+<p>I've only poked around a little, but so far I've found three separate package managers for OS X: Fink, MacPorts &amp; Homebrew. Each is heinous in its own special way, but the fact that you have three competing package managers, <em>that don't talk to each other</em> has convinced me that Mac users, in the typical hipster fashion, brutally raped the Unix culture, throwing away everything that made it unique because they did not understand it. These Visigoths are the single best case for government mandated licensing for computer programmers.</p>
+
+<p>What's wrong with having disparate package managers? Being completely comfortable with the risk of sounding like your grandfather, the problem is <em>I'll tell you when we get to production.</em> No, really. Installing your packages in production is going to be a pain in the balls if you are using any or all of these OS X package managers. If it's not, then you haven't been doing this long enough. I realize that if you're a Mac web developer, your deployments probably consist of <code>ssh</code> and <code>git pull</code>, but when you are older, you will understand the value of automated version dependency satisfaction. Better not tell you now, it would spoil the surprise.</p>
+
+<p>The scary part about having many general use package managers is that it pushes programmers toward using programming language specific package managers like <code>gem</code> and <code>pip</code>, which only serve to metastasize the problem. I generally make Debian packages for everything, even if it means repackaging a <code>pip</code> package, but thankfully, there are scripts for that.</p>
+
+<p>One of the unfortunate trends in OS X package management is the idea that the user should be compiling everything. This is being perpetrated mostly by the Homebrew package manager, whose basic building block is the <em>formula</em>, basically a Ruby script that tells it how to download, compile, and install the package. Well congratulations, dipshit, you've reinvented <code>dpkg</code>, poorly. I am simply trying to develop an application, is there a good reason why I am compiling <code>libxml2</code> and all of its dependencies? What is this shit, Gentoo?</p>
+
+<h3>You don't deploy to BSD</h3>
+<p>So why the hell are you developing on it? You can't possibly expect software packages to behave similarly across MacOS X and Linux, which is probably your production environment. OS X and Linux have different kernels, which means different I/O &amp; process schedulers, different file systems, and a whole host of other implementation details that you'll write off as having been abstracted away until you have your first serious encounter with <em>It Works On My Machine</em> (confrontations with this beast that were resolved by installing packages are nothing compared to the unwelcome violation you'll get when you discover a <em>real</em> operating system difference). These problems won't come often, but when they do, you'll conveniently forget that I ever warned you.</p>
+
+<p>This is one of those lessons that it will take you a few catastrophic failures to learn. Your development platform should be as close as possible to your production platform.</p>
+
+
+<h3>Textmate sucks</h3>
+<p>Sooner or later, you have to face facts. Man up and learn Emacs.</p>
+
+<h3>The hardware is overpriced</h3>
+<p>A basic 15" MacBook Pro will run you $1,800 while you can buy a comparable model from Lenovo for $1,200. An extra $600 for the privilege of running a shitty operating system, where do I sign up? You could put that extra cash into time saving hardware like SSD drives, time-altering hardware like tequila, or perhaps to pay a few months worth of project hosting.</p>
+
+<p>While the flesh has certainly rotted off this horse's bones by now, the price issue for Mac developers is more of an indicator of other problems: you're spending too much money on a device that looks nice, but ultimately makes your job harder. If you're a startup, this is called <em>dick swinging</em> and doesn't serve anybody.</p>
+
+<h3>'Lost' apologists are almost always Mac users. Scientists are baffled.</h3>
+<p>I used to be a big time Mac fanboy. In fact, I even had a <a href="http://www.macworld.com/article/15516/1999/11/letters.html">letter published in Macworld magazine</a> when I was 15. However, at some point, I started writing code to put food on my table, and found that the Mac just does not cut it. I'm generally all for developers using the tools that they want to use and feel the most productive with, but tools like MacOS X cause more problems for the rest of the development team, and are a net negative. Bring your pet Rhesus monkey to work if you want, but the first time that little fucker throws feces at me, he's going to the hot dog factory.</p>
+
+<p>But really, Mac developers, stay out of the command line. You'll hurt yourselves.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

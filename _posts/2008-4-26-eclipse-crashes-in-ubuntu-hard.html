@@ -1,0 +1,6 @@
+--- 
+layout: post
+title: Eclipse Crashes in Ubuntu Hardy Heron
+mt_id: 19
+---
+I just upgraded my workstation to Hardy and got a SIGSEGV when starting Eclipse.&nbsp; It appears to be a bug in the Sun JVM that ships with Hardy, and it only happens on AMD64.<br /><br />If you're set on using this runtime, the fix is to disable the JIT compiler by launching Eclipse with -Xint, but that's comes with a severe performance penalty.<br /><br />The fix I used was to simply downgrade the Hardy JRE (6-06-0ubuntu1) to the Gutsy version (6-03-0ubuntu2).&nbsp; You'll have to edit /etc/apt/sources.list to add a Gutsy repository.<br /><br />I'm pretty sure this is the Sun bug: <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6614100">http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6614100</a><br /><br />And this is the Ubuntu bug: <a href="https://bugs.launchpad.net/ubuntu/+source/eclipse/+bug/174759">https://bugs.launchpad.net/ubuntu/+source/eclipse/+bug/174759</a><br /><br />  

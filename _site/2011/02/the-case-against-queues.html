@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>The Case Against Queues</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">The Case Against Queues</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Sunday, February 06, 2011
+  </div>
+
+  <div class="post-content"><p><img src="/teddziuba/images/nine-readers-out-of-ten-have-no-fucking-idea-who-this-man-is.jpg" class="post-lead-image"/>Some people, when confronted with a problem, think "I know, I'll use a queue." Now they have an unbounded number of problems.</p>
+
+<p>Networked message queues like ActiveMQ, RabbitMQ, ZeroMQ, and a host of other Java inspired software tumors are crutches of systems design.  I love asynchronous stuff as much as the next guy, but think of a queue like Java: it encourages large swaths of mediocre programmers to overengineer shit, and it keeps systems administrators in business by giving them something to respond to at 4AM.</p>
+
+<p>Here is some of the dumb stuff that queues enable:</p>
+
+<h4>The Blocking Consumer</h4>
+<p>You have some work that is sometimes produced faster than it can be done; a common problem. One of the commonly problematic solutions to it is to stick the work in a message queue, and have one or more consumers that block on the queue, picking work off as soon as it's available and doing it.</p>
+
+<p>What's wrong with this? First of all, it blurs your mental model of what's going on. You end up expecting synchronous behavior out of a system that's asynchronous. One of the concrete outcomes of that is the question <strong>how do you determinstically monitor this system?</strong> If the queue size is greater than zero, is this a failure state? If the queue size is greater than zero, it means that your system is over capacity, but what is your response to that? Spin more workers or let it ride? If your answer is "spin more workers", then you should be doing the work synchronously because the implication is that you care about the amount of time it takes for a worker to get to the work.  If your answer is "let it ride", then how do you know when your system is in trouble: if there are ten jobs in the queue? Ten thousand?</p>
+
+<p>If you are designing a system that relies on a blocking queue consumer, you should likely be doing the work synchronously, without the queue. System gets overloaded? I've got a solution for that, too: <em>capacity planning</em>.</p>
+
+<h4>Collecting Data for Offline Processing</h4>
+
+<p>Say you've got some events that you want to record, and then process offline in a batch job. Using a message queue for this will only lead to tears.</p>
+
+<p>In such a system, you've usually got multiple data producers, and you want the data aggregated in a single place. As chance would have it, UNIX ships with a facility that can do this consistently and reliably. We call it syslog.</p>
+
+<p>Depending on your queue implementation, when you pop a message off, it's gone. The consumer acknowledges receipt of it, and the queue forgets about it. So, if your data processor fails, you've got data loss. Collecting messages syslog, your processor program is just processing a text file, and can process it again if something goes wrong. Throw in some <code>split</code> and <code>xargs</code>, and you've got parallel processing. Event messages aren't text? You fucked up. Go buy a subscription to the Microsoft Developer Network.</p>
+
+
+<h4>Everybody Loves System Complexity</h4>
+
+<p>Obviously I have been generalizing thus far. There are host of situations where you need to separate the production of work from the consumption of work, and fully understand the consequences. I'm not hating on that asynchronous pattern, I'm hating on introducing more software into your stack unnecessarily. Can you use a database table for it? Can you use files on disk or a named pipe? Syslog? (modern syslog implementations will write to a database) Bringing new services in should be the absolute last resort, because every new service is an unknown that needs to be configured and maintained. Adding a queue to your stack isn't just adding a service. It's ancillary maintenance code, libraries, monitoring scripts - all more things that can and will fail.</p>
+
+<p>Liabilities, as it were.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

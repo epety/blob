@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Python Makes Me Nervous</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Python Makes Me Nervous</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, December 06, 2008
+  </div>
+
+  <div class="post-content"><img alt="wait-til-you-see-those-goddamn-bats.jpg" src="/teddziuba/images/wait-til-you-see-those-goddamn-bats.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="238" width="274" /> <div>The amount of time saved by using Python as opposed to something like Java is inversely proportional to the number of people working on the project.<br /><br />As a programmer in a team, you need rules.&nbsp; You need structure.&nbsp; You need order.&nbsp; Freewheeling your way around a software project is going to create more problems than it solves.<br /><br />What I'm butthurting about here is Python's duck typing.&nbsp; It's cute when you're a lone wolf working on a simple Django application, but add a few more people to the project and it quickly becomes unmanageable.&nbsp; Why?&nbsp; Because with duck typing, you need to keep <b>a lot</b> more state in your head to interact with other peoples' code.<br /><br /><b>Pydev for Eclipse Sucks Too</b><br /><br />Method signatures are virtually useless in Python.&nbsp; In Java, static typing makes the method signature into a recipe: it's all the shit you need to make this method work. Not so in Python.&nbsp; Here, a method signature will only tell you one thing: how many arguments you need to make it work.&nbsp; Sometimes, it won't even do that, if you start fucking around with **kwargs.<br /><br />Calling a colleague's method isn't as easy as looking at the signature.&nbsp; You need to look at the method definition itself to see what it does with its input.<br /><br />Let's look at an example from Thrift, Facebook's open source RPC server.&nbsp; Here's the signature to a TServer constructor in Java:<br />
+
+<pre><code>
+protected TServer(TProcessorFactory processorFactory, TServerTransport serverTransport)
+</code></pre>
+
+And there are a few other constructors that take different args.&nbsp; Pretty straight forward, if you look at this, you know what you need to instantiate to get your TServer up and running.&nbsp; Now let's look at the Python version:<br />
+<pre><code>
+def __init__(self, *args):
+</code></pre>
+
+So, how do you use it?&nbsp; Big fuckin' mystery!&nbsp; You can't overload constructors in Python, so they had to mash the several different constructors into one.&nbsp; To figure out how to instantiate a TServer, you need to look at the constructor implementation.&nbsp; <i>As a user of the library, the implementation is none of my concern, unless I'm programming in Python.</i><br /><br />What a waste of time.<br /><br /><b>Whatever You Do, Don't Do It Wrong</b><br /><br />What about errors?&nbsp; Python exceptions are what really make me nervous.&nbsp; Your code can run fine for the longest time then shit out with a runtime exception.&nbsp; How do you know what exceptions a method can throw?&nbsp; Well, you don't, unless you look at the method definition.&nbsp; Fantastic.<br /><br />Java has a well thought out hierarchy of checked and runtime exceptions.&nbsp; Sure, handling checked exceptions means you need to write a bit more code, but it's better to spend the time in development than in debugging at 4am.&nbsp; <br /><br />Another example is in order.&nbsp; In Java, the constructor to FileInputStream throws a FileNotFoundException if something goes wrong.&nbsp; Since it's a checked exception, you need to deal with it somehow.&nbsp; The fact that this exception is thrown is made obvious in the documentation, and your code won't compile if you ignore it.<br /><br />Python, on the other hand, prefers to leave things up to chance.&nbsp; This is the documentation for the open() builtin, that opens a file:<br /><br />
+<pre>Help on built-in function open in module __builtin__:
+
+open(...)
+    open(name[, mode[, buffering]]) -&gt; file object
+    
+    Open a file using the file() type, returns a file object.
+(END) 
+</pre>
+
+How does this function handle a failure?&nbsp; Does it raise an Exception?&nbsp; Does it return a special value?&nbsp; Nobody seems to know!&nbsp; Ah, fuck it, that's a runtime problem, right?<br /><br />Sure, runtime exceptions happen in Java, but they are usually things that are indicative of a <b>big</b> fuckup like a NullPointerException, not something stupid like a file not being found.<br /><br />Programming a large project in Python makes me uneasy.&nbsp; Perhaps I'm just doing it wrong?&nbsp; Do other Pythonistas drop a Valium before they begin the day?<br /></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

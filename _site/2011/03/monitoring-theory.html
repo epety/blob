@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Monitoring Theory</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Monitoring Theory</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Friday, March 11, 2011
+  </div>
+
+  <div class="post-content"><p><img src="/teddziuba/images/cheezburger-inc-tries-to-copyright-this-shit-but-i-cut-out-their-watermark-because-fuck-them.jpg" class="post-lead-image"/>Around the time in my life when I stopped ordering drinks made with more than one ingredient, I was woken up for the last time by a hypochondriac Nagios monitoring installation. If you are on-call long enough, you cultivate a violent reaction to the sound of your cell phone's text message alert. If your monitoring is overconfigured, that reaction boils over hastily, as it will interrupt you during meals, sex, sleep &mdash; all of the basics &mdash; with the excruciating operational details of your web site.</p>
+
+<p>I've since developed, with the help of some noble systems administrators, a theory around service monitoring: monitors can be <strong>informative</strong>, <strong>actionable</strong>, or both. By <em>informative</em>, I mean that the alert must tell you categorically that there is a problem. By <em>actionable</em> I mean that receiving the alert must prompt some kind of immediate response. Alerts can therefore break down like this:</p>
+
+<hr class="space"/>
+<h4>Neither Informative nor Actionable</h4>
+<p>I call these types of alerts <strong>Cool Story, Bro</strong> for short. These are bits of information that do not indicate any sort of problem state, and do not prompt any action. Cool Stories are things that you should not even have alerts for. They waste your time and make you paranoid. <strong>If you want to track a metric whose state is neither informative nor actionable, make it a graph, not an alert.</strong> Cool Story Bro alerts are things like:
+
+<ul>
+  <li><em>The load average on a server is above 20.</em> This doesn't actually indicate a problem. In Linux, the load average is simply the number of processes in the kernel's run queue, and as long as the CPUs, disk channels, network interfaces, and memory are less than 100% capacity, the machine is not busy enough. A high load is nothing to worry about. I don't even have alerts on load average. I have production machines with load averages well over 100 that are working just fine.</li>
+
+  <li><em>A job queue has more than X work units in it.</em> Congratulations, dipshit, your queue is doing exactly what it is supposed to do. It's a subjective decision whether or not this is a failure state. One of the reasons that I hate queues.</li>
+
+  <li><em>Some metric is greater than an empirically determined mean.</em> I get personally offended by shit like this. "Have it alert if it's 10 more than the average"; first of all, read Zed Shaw's <a href="http://zedshaw.com/essays/programmer_stats.html">Programmers Need To Learn Statistics Or I Will Kill Them All</a>, and second, alerts based on empirical data will frequently give false positives, as the measurements the alert takes are <em>new empirical data you haven't seen before</em>. Furthermore, any up/down check program that needs to keep state about the return results of previous checks is a recipe for tears.</li>
+</ul>
+</p>
+
+<hr class="space"/>
+
+<h4>Informative, but not Actionable</h4>
+<p>Informative but unactionable alerts are ones that indicate an abnormal state, but are not things that you need to handle immediately, so they should be e-mail alerts, not pager messages. They are things that you can handle during the workday, and don't need your surly, undivided attention at four o'clock in the morning. For example:
+
+
+<ul>
+  <li><em>The primary disk on your database server is at 90% capacity.</em> Is the site down? No? Then fuck off, I'll get to it.</li>
+  <li><em>Memory on your MongoDB server is at 80% capacity.</em> For those of you working at Foursquare, when a critical server is approaching its maximum physical memory capacity, you should be aware, as it means bad shit may happen soon if it keeps growing.</li>
+  <li><em>One out of three load-balanced web servers is down.</em> Good to know, but I don't have to get off my ass just yet.</li>
+</ul>
+</p>
+
+<hr class="space"/>
+<h4>Informative and Actionable</h4>
+<p>This is your meat and potatoes. When one of these fuckers goes off, it's <em>battlestations</em>. Drop your cocks and grab your socks, we got shit to fix. Yes, these are the alerts that should be waking you up in the middle of the night. Milo's production Nagios config has roughly 10 of these, double that in e-mail only alerts, and quite a few cool stories to satisfy some paranoid delusions. Some example alerts that should get your lazy ass out of bed:
+
+
+<ul>
+  <li><em>The search handler of your public site serves HTTP 500.</em> Your users probably weren't looking for that.</li>
+  <li><em>Your API's latency is outside of SLA.</em> Welcome to losing-moneyville. Population: you.</li>
+  <li><em>The CSS statics on your home page fail to load.</em> It's a really obscure HTTP status code, you probably haven't heard of it.</li>
+</ul>
+
+</p>
+
+<hr class="space"/>
+<h4>Systems Design Considerations</h4>
+
+<p>When you design a new system, design it to be monitorable. The basic criterion is this: <em>there must be a <strong>stateless</strong>, <strong>deterministic</strong> way to check the system's health</em>.
+
+<ul>
+  <li><em>stateless:</em> The check run at time <code>t</code> must not depend on the outcome of the check run at time <code>t - 1</code>.</li>
+  <li><em>deterministic:</em> There is no random variability or subjective judgment to determine whether or not the system is healthy. Health is a binary value.</li>
+</ul>
+
+This seems obvious but I've seen a lot of smart people fuck it up. I keep harping on message queues, but they are a good example of poor system design that is unmonitorable. Consider this system:
+
+<blockquote>
+Producer &rarr; Queue &rarr; Blocking Consumers
+</blockquote>
+
+End to end, how do you check that this system is OK? The logical entry point for a monitor is the producer, send a job through the system and check that it gets processed by a consumer, but the asynchronous queue makes that determination a judgment call. What if it takes a minute? What if it takes an hour? Is the system still OK if the time from job production to job completion is a day?</p>
+<p>If you need the asynchronous model, what you generally want is a <em>spool</em>, where you say that it is not a requirement that work be processed as soon as possible, but rather, in an offline batch job. In this case, you can simply monitor that the spool size has not overflowed the capacity of the physical device it's on, and that your processing batch job has run successfully.</p>
+
+<p>If you want work processed as it comes in, think about this:
+
+<blockquote>
+Producer &rarr; Load Balancer &rarr; Consumers
+</blockquote>
+
+You still have a fixed number of consumers, except work is being done synchronously, and the load balancer decides which of the consumers gets the work. If all consumers are busy, the load balancer refuses incoming work, because your system is <strong>over capacity</strong>.  This is a failure state, and can be deterministically measured.</p>
+
+<p><em>But Ted</em> you say, <em>what if there's a lot of traffic and the consumers get backed up?</em> Aye, welcome to the world of capacity planning. In this case, using an asynchronous queue is a crutch that helps you avoid thinking about your system's actual resource utilization, and it will come back to burn you because it us unmonitorable. In the face of increased traffic, if you're so confident that you can "spin up more queue workers", then you can sure as hell "spin up more synchronous workers".</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

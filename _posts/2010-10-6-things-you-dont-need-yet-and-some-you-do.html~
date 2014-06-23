@@ -1,0 +1,42 @@
+---
+layout: post
+title: Things You Don't Need Yet (And Some You Do)
+---
+<img class="post-lead-image" src="/images/i-hope-prop-19-passes-only-so-potheads-have-something-else-to-talk-about.gif">
+<p>I used to really like trying new things in programming, that is, until I had to grow up and start producing reliable software. I have learned that there are two keys to reliability:</p>
+
+<ol>
+  <li>Destroy dependencies with Biblical fury.</li>
+  <li>Functionality is an asset, code is a liability.</li>
+</ol>
+
+<p>Looking back on programs I've written that have woken me up in the middle of the night, each one started with that stiff-shouldered confidence you've got when you think you're on to something clever. Conventional wisdom is conventional for a reason: <em>that shit works.</em></p>
+
+<p>As a programmer, your goal should be to write code that you never have to worry about again. If you're at a startup, chances are that you are on the business end of alerts that trigger when the production environment gets rowdy; and I don't know about you, but I have yet to get an alert at a convenient time.</p>
+
+<p>These are a list of things I've collected that I consider to be the "right way" to start off. These are things that you don't need <strong>yet</strong>, and the point at which you will need them is pretty far off.</p>
+
+<h3>Things You Don't Need Yet</h3>
+
+<h4>Web Servers That Aren't Apache</h4>
+<p>Apache is one of the most full featured pieces of serving software out there. The things you can do with mod_rewrite alone make it worth using. Nginx is neat, but it hasn't yet completed a 15-year degree at the school of <em>gettin' shit done</em>. Apache can do basically everything you need done in the HTTP conversation, in fact, you can probably replace a significant portion of web-stack middleware with existing Apache modules.</p>
+
+<h4>Databases That Aren't PostgreSQL</h4>
+<p>Or Oracle, I suppose, if you've got the scratch for it.  Not only is Postgres a very mature database product, it also has a feature you don't realize you need: <em>graceful performance degradation</em>. This is the dark alley that MySQL and most NoSQL databases are hiding in, waiting to jump out and stab you in the throat with a toothbrush that's been sharpened to a point by rubbing it against concrete.</p>
+
+
+<h4>Message Queues</h4>
+<p>I know I'm going to catch a lot of shit for this, but stuff like ZeroMQ, RabbitMQ and ActiveMQ are things that you just don't need. You can emulate a job queue in a database well enough. My theory is "do it until it becomes a problem", and it probably won't be a problem for a long while. If your queue really requires such low latency and high throughput that you need to use a dedicated service, then you're either overestimating how important the work is, or you work at an investment bank.</p>
+
+<p>In either case, reconsider your place in the world.</p>
+
+<h3>Things You Need Now</h3>
+
+<h4>Continuous Integration</h4>
+<p>This is one thing that I wish I had started with from the beginning.  <em>Bang around on it</em> is not not an acceptance test.</p>
+
+
+<h4>A Deployment System</h4>
+<p>One thing that really gives me The Fear is the Rails/Capistrano idiom of SSHing to production boxes and calling <code>svn checkout</code>, or worse <code>git pull</code>. It doesn't smell right.</p>
+
+<h4>Monitoring</h4>

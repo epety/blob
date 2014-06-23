@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Eventlet: Asynchronous I/O for Grownups</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Eventlet: Asynchronous I/O for Grownups</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Thursday, February 11, 2010
+  </div>
+
+  <div class="post-content"><img alt="lose-an-argument-like-a-man-say--well-i-guess-ill-just-go-fuck-myself-then.jpg" src="/teddziuba/images/lose-an-argument-like-a-man-say--well-i-guess-ill-just-go-fuck-myself-then.jpg" width="250" height="188" class="post-lead-image" style="float: right; margin: 0 0 20px 20px;" />Event-driven asynchronous I/O is the newest chatter at the Silicon Valley High Abercrombie table. &nbsp;Threading, the mode of parallelism we all thought we were so smart for understanding, isn't cool anymore. Everybody who is anybody is using asynchronous I/O, and of course, there are different opinions on how it should be done. This being the software world, you can count on those opinions being vehement.<div><br /></div><div>If you look at the benchmarks, all of the major async libraries for Python are basically on the same operating plane. There's Twisted, Tornado, gevent, and a handful of others, but the one that really stands out in the group is <a href="http://eventlet.net/">Eventlet</a>. Why is that? Two reasons:</div><div><br /></div><div>1. <b>You don't need to get balls deep in theory to be productive with Eventlet.</b></div><div>2. <b>You need to modify very little pre-existing code to adapt a program to be event-driven.<br /><br /></b></div><div>Eventlet's approach is that <i>asynchronous code should look like synchronous code</i>. Why? Because it's easy for people to understand synchronous code. &nbsp;Thinking about callbacks and schedulers is unnecessary, after all, we have work to do. What's more, not only does asynchronous code with Eventlet <i>look</i> synchronous, it can also <i>run</i> synchronously.</div><div><br /></div><div>Look at this Python snippet:</div><div><br /></div>
+
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">fetch_and_parse</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">lxml</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+    <span class="c"># Do some parsing on the ElementTree</span>
+    <span class="k">return</span> <span class="n">value</span>
+</pre></div>
+
+It looks like regular synchronous code, and ostensibly it is. The output of the URL fetch is the input to the HTML parser. However, if you have a ton of URLs to do this to, how would you parallelize it? Threads are an option, but so is Eventlet:<div><br /></div><div><div>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">eventlet</span>
+<span class="kn">from</span> <span class="nn">eventlet.green</span> <span class="kn">import</span> <span class="n">urllib2</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">green_pool</span> <span class="o">=</span> <span class="n">eventlet</span><span class="o">.</span><span class="n">GreenPool</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">green_pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">fetch_and_parse</span><span class="p">,</span> <span class="n">urls</span><span class="p">):</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div></div></div>
+
+This is interesting because all I've done to make a seemingly synchronous piece of code run asynchronously is to patch the library it needs for I/O and give it a driver method. That driver class could have easily been a series of threads all reading from a Queue, and importing the standard library's version of urllib2.<div><br /></div><div>Now hold on a second. This is a painfully contrived example, but it's such a key point: The asynchronous code looks synchronous. It can even function synchronously. All I did to make it use event-driven I/O is <b>change the driver and patch a library</b>. Now this is podracing!</div><div><br /></div><div>That sort of integration has such a massive business value that I will easily disregard any pissing-contest performance gains that Twisted or Tornado may offer. I know that when you have code written in the "old" style, and the powers that be hand down the "new" style, there is an itch to re-write it, but rewriting known-working code is the worst thing you can do for your project.</div><div><br /></div><div>The Eventlet developers have gone further than this, providing a facility to monkey-patch the existing system libraries at invocation time. For example, let's say you have a web app that does some Memcached I/O and some database I/O.</div><div><br /></div>
+
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">eventlet</span> <span class="kn">import</span> <span class="n">patcher</span>
+<span class="n">patcher</span><span class="o">.</span><span class="n">monkey_patch</span><span class="p">(</span><span class="nb">all</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+Oh look. Your application is now using asynchronous I/O. This call patches Python's socket module and a few others to make it all "just work" with Eventlet's internal coroutine switching mechanism. (Caveat: MySQLdb, which uses C-land sockets, needs a little bit of extra treatment, but it's only a couple of lines)<div><br /></div><div>This all sounds great in theory, but I have actually made a large I/O bound program work using monkey patching and changing the driver. It is a piece of software that reads jobs from a queue and processes them, putting the result in memcached. For esoteric reasons I will not go into, the job processors could not thread the work, they had to fork. Using this setup, one production box with 8GB of RAM was consistently 7.5GB full. After a less than 5 line code change to the driver, that same production box uses only around 1GB of RAM consistently, and can handle 5 to 10x the throughput of the old system.</div><div><br /></div><div>Now compare this to Twisted or Tornado. Twisted tries so damn hard to be Java that it really offends me personally. Those developers strike me as the alpha-programmer types who see no reason <i>not</i> to rewrite an existing codebase for a 20% performance gain. &nbsp;Tornado on the other hand is significantly less Jersey Shore douchebaggy, but they still miss the point: we are programmers who need to get stuff done. Inventing your own HTTP client class, when Python's builtin works just fine if not better is the type of hubris that gets hotshot programmers fired in their first month.</div><div><br /></div><div>There's also gevent, which appears to be a fork of Eventlet, but is not as well documented. Partial credit.</div><div><br /></div><div>It's hard to find a performance or scaling related open source library that values my time. Eventlet is one of those rare few.</div><div><br /></div><div><a href="http://eventlet.net/">http://eventlet.net</a><br /><div><br /></div></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

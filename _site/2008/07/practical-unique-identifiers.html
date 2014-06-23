@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Practical Unique Identifiers</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Practical Unique Identifiers</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Tuesday, July 01, 2008
+  </div>
+
+  <div class="post-content"><img alt="dogs_love_md5.jpg" src="/teddziuba/images/dogs_love_md5.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="230" width="307" />There have been a handful of places within the Persai pipeline where I have needed unique identifiers of varying length.&nbsp; 64 bits here, 32 bits there.&nbsp; I'm not the only one to ever have to solve this problem, but I could never find a concise toolbox of information on it.<br /><b><br />Automatic Increment or Not</b><br /><br />MySQL has the AUTO_INCREMENT modifier for integral record keys.&nbsp; That's great, if you're using MySQL.&nbsp; In general, prefer a non-automatically increasing record identifier, unless you have a specific reason.&nbsp; Here's why:<br /><br /><ul><li>You may actually have to think about thread synchronization at some point when creating records.</li><li>If these identifiers become publicly visible, they can leak information about how many records are in your database.</li><li>If you make identifiers out of other pieces of data (say URLs), then you can't get the identifier value of a given datum without a table lookup.&nbsp; And even then, you'll need another index on <i>that</i> field.<br /></li></ul>There are a few cases where automatic increment identifiers are good, though:<br /><br /><ul><li>You are using a MySQL database and are setting up a simple structure of tables. (i.e. MySQL handles synchronization for you and it's actually harder to <i>not</i> use automatic increment)</li><li>The creation order of records is really important to you, but not important enough to store a timestamp field.</li></ul><br /><b>Making an Identifier Out Of Arbitrary Data</b><br /><br />Easy, right?&nbsp; Just hash whatever data you've got.&nbsp; It's not reversible and spread uniformly over the identifier space.&nbsp; However, many times the output of a standard hashing algorithm is too big.&nbsp; SHA-1, for example, is 160 bits wide.&nbsp; Way too long for most purposes.<br /><br />In this case, I truncate the output.&nbsp; Yes, this is mathematically valid, because any good hashing algorithm's output will be uniform over the range of the function.&nbsp; And by uniform, I mean really uniform.&nbsp; For example, if you take the first 64 bits of a 160-bit SHA-1 hash and call that your unique identifier, the probability of a collision is going to be uniform over the space of all 64-bit numbers.&nbsp; If it wasn't (i.e. the first 64-bits of a SHA-1 hash were distributed, say normally), then the hash function would be cryptographically insecure.<br /><br />Don't try to swing your dick around and come up with your own hash function.&nbsp; You'll screw it up.&nbsp; I know I have.<br /><br /><b>
+GUIDs</b><br />
+<br />
+I got an e-mail from a reader about using GUIDs for unique identifiers.&nbsp; This fits with the hashing scheme, but for the most part, I think GUIDs are far too large, especially if you are storing a lot of records.&nbsp; GUIDs are 128 bits wide, so if you have a hundred million records, that's about 1.5GB worth of identifiers.&nbsp; Use a 64-bit identifier, and your space is halved, without a significant increase in collision probability.<br /><br /><b>Making An Identifier Easier On The Eyes</b><br /><br />If you need to put a unique identifier in a URL, it can't look too nerdy.&nbsp; For example, this URL looks like shit:<br /><br /><blockquote><code>http://www.website.com/document?id=1b25a53bf21d0206</code><br /></blockquote>Too many numbers.&nbsp; So, to make it look better, Base-64 encode it.&nbsp; It will lengthen the code a little, but it's much easier to look at:<br /><br /><blockquote><code>http://www.website.com/document?id=ZnJvc3RlZCBidXR0cw==</code><br /></blockquote>Eh, well it looks better to me.&nbsp; Personal taste, I guess.<br /><br />You'll need to make sure that your Base-64 alphabet doesn't include the + and / characters: they aren't URL safe.<br /><br /><b>Sort Orderings</b><br /><br />Don't worry about sort ordering unless you have to worry about sort ordering.&nbsp; Duh.&nbsp; The vast majority of Persai's data is stored simply as files, and for most purposes we don't have to care about the processing order.&nbsp; We're fortunate in that regard (well maybe not <i>fortunate</i>, I mean that's like saying you're <i>fortunate</i> that you're not fat because you exercise and eat sensibly).<br /><br />Anyway, there are a couple of places in Persai where sort order matters.&nbsp; The ordering of recommendations, for example.&nbsp; There, though, we're just ordering by time, and we need to display the exact time, not just the relative times of the recommendations, so we store a date field and order data by it in the store.<br /><br />This drives one of my earlier points home: <i>if you need ordering by time, don't count on an automatic increment unique identifier to do it</i>.&nbsp; It's much more robust to store a timestamp.<br /><br />In fact this point goes deeper.&nbsp; Very rarely do you actually need records sorted by record identifier.&nbsp; What you need is the records sorted by some other value that happens to be reflected in the record identifier by virtue of automatic increment and the insertion order.&nbsp; It's always more robust to store the actual value you need to sort by.<br /><br /><b>I'm Not Going To Tell You How To Write Code</b><br /><br />Because I don't really care.&nbsp; This is how I do it, though.<br /> <div><br /></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

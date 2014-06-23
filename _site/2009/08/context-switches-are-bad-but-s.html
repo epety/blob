@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Context Switches are Bad, but Stack Traces are Worse</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Context Switches are Bad, but Stack Traces are Worse</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Monday, August 17, 2009
+  </div>
+
+  <div class="post-content"><img alt="never-trust-a-person-who-wears-a-tie-who-asks-you-how-to-query-the-database.png" src="/teddziuba/images/never-trust-a-person-who-wears-a-tie-who-asks-you-how-to-query-the-database.png" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="317" width="290" /> <div>Every programmer works in silent fear of a manager sneaking up on him and asking him to drop everything he is doing and work on an unrelated task. Context switches like this cost us time and energy, but managers are beginning to figure out that a programmer isn't a machine that can be switched on and off, no, they're understanding that a programmer is a machine that needs a warm up phase. <br /><br />I guess you could call that progress.<br /><br />I'm fortunate enough to work with a company that understands engineering, but I have worked with my fair share of nontechnical managers, and I have to say that categorically that the most expensive question a manager can ask is "What are you working on?"<br /><br />The danger here is when you're six or seven levels deep into yak-shaving, and your manager wants to know what you're doing and why. You need to give the manager a complete stack trace from your current frame all the way up to the original task. Each jump up the call stack is a context switch of its own, where you need to remember exactly why you made the decision that you did, and justify it as the best course of action. <br /><br />"I'm compiling a new version of libxml, so I can get the Python parser working.&nbsp; I need to do that because LXML, the Python binding, would crash under heavy load when I used the system default version of libxml. I am using LXML because BeautifulSoup doesn't have support for XPath. I need to do XPath transforms against the input because the legacy system we interact with doesn't send well-formed XML. We tried to get the vendor to fix it but they said 6 to 8 weeks for a patch, and our project deadline is sooner than that. I need to interface with the legacy system because even though the DBAs have ported things over to Oracle, they're still sorting things out and it's not reliable enough for me to make any meaningful progress. Fortunately, I've thought this through and abstracted the data subsystem well enough that I can drop-in replace Oracle when it's ready, so long as the database sends some decent form of XML. Once I get this data subsystem done, I can finish the business logic, which attaches to the nonfunctional demo you love so much.<br /><br />So yeah, I'm working on the new asset tracking system."<br /><br />Stack trace, all the way up to the main method.&nbsp; It's not always that simple. I know I have trouble keeping that many stack frames in my head. I can't remember why I chose to go down the path that I did, other than "there was a good reason for it". After all, I'm not slogging my way though compilation bullshit for my health. When a manager demands a full stack trace like this, it sets your progress back, because you need to go over decisions that you already made, examine the circumstances, and make the same decisions again. You lose your original frame of reference, and your manager thinks you're just fiddledicking around instead of doing work.<br /><br />So what's there to do? If you're awesome like me and work for a manager who understands why programming is hard, chances are you can just leave the answer to "what are you doing?" at the innermost stack frame.&nbsp; Everybody wins. However, if your manager is nontechnical, your goal is to get him off your ass as soon as possible, because you want to minimize the damage he does to your productivity. My recommended course of action, when asked "What are you working on?" is to slap the manager in the face and yell "<i>YOU DON'T END A SENTENCE WITH A PREPOSITION UP IN THIS BITCH. THIS IS MY HOUSE."</i> Thump your chest with a clenched fist and say <i>"yeah what's now, fool"</i> under your breath.<br /><br />Failing the battery charge, the key phrase is "I explored every option".&nbsp; Beyond this, there's really no way out, because your manager doesn't trust you. You're basically fucked. Quit your job and come work with me.<br /></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

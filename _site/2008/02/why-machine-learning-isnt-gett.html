@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Why Machine Learning Isn't Getting Any Easier</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Why Machine Learning Isn't Getting Any Easier</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, February 02, 2008
+  </div>
+
+  <div class="post-content">I learned the basics of machine learning in college.&nbsp; Classifiers, clustering, all that jazz.&nbsp; Every undergrad computer science major loves this crap because they can understand it with a passing knowledge of linear algebra.&nbsp; <i>Machine learning</i>.&nbsp; Sounds pretty sexy.<br /><font style="font-size: 1.25em;"><b><br />In Practice, It's A Lot Harder Than What You Did In College</b></font><br /><br />Up front, let me say that I implemented the vast majority of the machine learning technology behind <a href="http://www.persai.com/">Persai</a>.&nbsp; In the beginning, I thought it was going to be a breeze.&nbsp; Take some documents, turn them into features, train a classifier, and off you go.&nbsp; The harsh reality is that less than one percent of the time I spent on this system went into the "sexy part" of machine learning, and most of <i>that</i> was done by the guy who wrote the SVM library we use!<br /><br />The lion's share of time, and the source of most of the hair-pulling, was spent dealing with the data.&nbsp; Data coming in off of the open internet is <i>dirty</i>.&nbsp; Conflicting character set declarations, boilerplate removal, duplicate detection: these things will drive you to insanity and back.<br /><br />I was fooled by the simplicity when I first learned this stuff.&nbsp; This is what they teach you about vector space model based classifiers:<br /><br /><ol><li>Turn your data into vectors.</li><li>Specify the positive and negative samples.</li><li>Train your classifier.</li><li>Tune your vectorization scheme and classifier parameters until the classifier is good.</li></ol>What they don't teach you is this: <b>Step 1 is a <i>bitch</i></b>.<br /><font style="font-size: 1.25em;"><b><br />Publish Or Perish</b></font><br /><br />If turning data into vectors is such a hard problem, why aren't the academics churning out papers about it?&nbsp; Because it's not sexy.&nbsp; There are no numerical nuances to deciding how to handle a document whose declared character set is ISO-8859-1 but is actually encoded in UTF-8.&nbsp; There's no Turing award coming your way for finding a way to make reasonable text out of horrifically malformed HTML that makes you curse Firefox and Internet Explorer for accepting as renderable.<br /><br />When I started Persai, I admitted that somebody else has already done the mathematical programming better than I ever could.&nbsp; I didn't spend years of my life studying numerical analysis, so chances are, if I attempted to write my own SVM library, I would fail.&nbsp; So, in the interest of success and avoiding Not-Invented-Here syndrome, I used somebody else's library.<br /><br />People have busted my chops for this, too, as if I am somehow less of an engineer if I use a third-party library.&nbsp; However, one thing has become painfully obvious: <i>the quality of a classifier depends much, much more on your ability to sanitize data than on the algorithm you use</i>.<br /><br />  
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

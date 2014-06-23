@@ -1,0 +1,16 @@
+--- 
+layout: post
+title: Shut Your Face, Commons Httpclient
+mt_id: 64
+---
+If you're like me and every other user on the planet, you don't give a shit when an SSL certificate doesn't validate.&nbsp; Unfortunately, commons-httpclient was written by some pedantic fucknozzles who have never tried to fetch real-world webpages. <br /><br />If you want to turn off SSL certificate validation in httpclient, do this:<br /><br />1. Put <a href="http://juliusdavies.ca/commons-ssl/download.html">not-yet-commons-ssl.jar</a> on your classpath.<br />2. Execute the following method before you start any SSL connections:<br /><br /> 
+
+<pre><code>
+public static void trustAllCerts() throws GeneralSecurityException, IOException {
+	ProtocolSocketFactory sf = new EasySSLProtocolSocketFactory();
+	Protocol p = new Protocol("https", sf, 443);
+	Protocol.registerProtocol("https", p);
+}
+</code></pre>
+
+This essentially makes commons-httpclient accept every SSL certificate it gets.&nbsp; Yeah, that's what I thought.  Who's bitching now? 

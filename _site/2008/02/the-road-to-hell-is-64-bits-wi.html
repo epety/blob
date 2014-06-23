@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>The Road To Hell Is 64 Bits Wide</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">The Road To Hell Is 64 Bits Wide</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Thursday, February 14, 2008
+  </div>
+
+  <div class="post-content">Java is an awesome language because you get to ignore hard stuff like memory allocation.&nbsp; Write once, run anywhere.&nbsp; Sweet, where do I sign up?<br /><br />The privilege of not having to manage memory comes at a cost: you aren't allowed to question how the JVM works.&nbsp; Move along, coder.&nbsp; Keep making those objects.&nbsp; Don't ask how much memory things take up. In fact, to keep you from getting curious, we're not even going to have a <code>sizeof</code> function.<br /><font style="font-size: 1.25em;"><b><br />How My Complacency Made Me Fail</b></font><br /><br />When you're coding in Java, it's easy to buy into this mentality.&nbsp; You never really have to worry about how much space anything takes up, and if you get an <code>OutOfMemoryError</code>, just give the JVM more memory.&nbsp; Problem solved.<br /><br />But there are times when you need to be conscious of how the JVM actually works.&nbsp; For example, when you're trying to squeeze every bit of performance out of the crappiest of machines, such the small Amazon EC2 instances (where Persai is hosted).<br /><br />Here's a real world example of how I got burned:<br /><br />Persai does a lot of work with high-dimensionality, sparse vectors.&nbsp; To save space, we compact the vectors.&nbsp; Since most of the values in the vectors are zero, we simply do not store them.&nbsp; What we store amounts to a list of the nonzero element indices and the corresponding values.&nbsp; This is our basic data structure:<br /><br /> 
+<pre>class sparseNode {
+    public int index;
+    public double value;
+}
+</pre>
+So a vector is an array of <code>sparseNode</code> objects. Sounds easy enough, and for a while, it was.&nbsp; That is until I was tasked with storing as many of these  in memory as I could.<br /><br />Where's the fail here?&nbsp; How big is an <code>int</code> primitive in Java? 32 bits, right?&nbsp; Sort of.&nbsp; The Java specification says that an implementation must provide 32 bits of workable space for the programmer using an <code>int</code>, but makes no mention of how how the virtual machine must store this variable.<br /><br />In Sun's HotSpot JVM, object storage is aligned to the nearest 64-bit boundary.&nbsp; On top of this, every object has a 2-word header in memory.&nbsp; The JVM's word size is usually the platform's native pointer size.&nbsp; Alright, two words for the object header, one word for the <code>int</code>, two words for the double.&nbsp; That's 5 words: 160 bits.&nbsp; Because of the alignment, this object will occupy 192 bits of memory.&nbsp; Effectively, the <code>int</code> value is taking 64 bits!&nbsp; In an array of these things, I've wasted N times 32 bits.&nbsp; Figure, a typical vector is about 200 elements long, so that's 800 bytes out the window for each one.<br /><br />This fun fact would have been good to know when I was doing my initial back of the envelope calculation of how many vectors I can fit in a gigabyte of memory.<br /><br />Yes, I know I should be complaining about the same thing when using C structs.&nbsp; But you know what?&nbsp; When you learn C, you are introduced to many harsh realities.&nbsp; When you learn Java, you are introduced to XML.&nbsp; They protect you from the hard things.&nbsp; Live and learn, I guess.<br /><br /><font style="font-size: 1.25em;"><b>The Fix</b></font><br /><br />After knowing this, it was easy to rescue myself.&nbsp; Java primitive arrays fall to the same alignment issue, but in our case, they can help solve the problem.&nbsp; Instead of representing a vector as an <i>array of objects</i>, we'll represent a vector as an <i>object of arrays</i>.<br /><br />
+
+<pre>class sparseVector {
+  public int[] indicies;
+  public double[] values;
+}
+</pre>
+
+This way, we're going to lose at most 4 bytes per vector with the alignment of the <code>int[]</code> array.&nbsp; This sure beats the ~800 byte loss with the other solution.<br /> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

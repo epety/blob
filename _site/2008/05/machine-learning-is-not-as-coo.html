@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Machine Learning Is Not As Cool As It Sounds</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Machine Learning Is Not As Cool As It Sounds</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Wednesday, May 14, 2008
+  </div>
+
+  <div class="post-content">I don't like to talk about my job.&nbsp; Don't get me wrong, I like what I do, I just don't like having to explain things to people who are feigning interest.&nbsp; It's a waste of everyone's time.<br /><br />When I do have to go into more detail than "I write software", I sex it up by saying "I write artificial intelligence software for recommendation systems".&nbsp; Sounds pretty awesome when you say it like that, huh?&nbsp; <br /><br />Truthfully, that's like describing a summer job at Burger King as "caloric energy distribution engineer".<br /><br />Yes, one of the things I do is implement machine learning methods for a news recommendation system.&nbsp; The prerequisite amount of pain-in-the-ass, why-did-I-go-to-college-for-this work, though, dominates the cool stuff.<br /><br /><b>Vector Space Model AI... Sounds Hot</b><br /><br />The idea here is that you turn your data into N-dimensional vectors and let loose a bunch of linear algebra on that shit.&nbsp; In return, you get stuff like classification and clustering.&nbsp; If you want to sound like you know what you're talking about here, you can mention stuff like <i>separating hyperplane</i>, <i>sigmoid kernel function</i>, or <i>k-means++</i>.<br /><br />I deal mostly in the vector space model.&nbsp; As awesome as all of this sounds, most of the work is a real pain in the balls.&nbsp; Writing a sequential minimum optimization routine for a support vector machine is a good exercise, but it's not useful in practice.&nbsp; Somebody else has already written it for me, and besides, that's not the problem I need to be concentrating on.<br /><br />Most of the methods that deal with VSM machine learning are well defined and fairly easy to implement.&nbsp; What remains a mystery, though, is the generation of the input.&nbsp; How you translate your data into vectors is <b>the most important problem to solve</b>.&nbsp; It's also the most boring. After that, you can worry about shaving 3 nanoseconds off of your dotproduct routine.<br /><br /><b>Then You Need To Deal With The Academics</b><br /><br />Publish or perish.&nbsp; Yeah, that's cute, but in the real world it's profit or perish, and that means getting useful results.&nbsp; Academics love machine learning because it affords them the opportunity to make slight variations to undergraduate level mathematical procedures, quantify the result, and write it up in LaTeX with graphs and shit.<br /><br />It's easy to write a paper showing the effects on precision and recall for a perceptron classifier on the Reuters corpus using normalized vs. non-normalized vectors.&nbsp; It's not easy to generate data as clean as the Reuters corpus from a web crawl.&nbsp; Not only is this task hard, it's about as much fun as chemotherapy.&nbsp; As such, there are no useful papers coming out of academia about how to parse HTML.&nbsp; Unfortunately, problems like these are the ones that need solving.<br /><br />When I talked earlier about all of the prerequisite bullshit, this is what I meant.&nbsp; You get the most testicular pain when dealing in text content, and the real deep-rooted ball ache comes from web content.&nbsp; We put a ton of effort into our HTML parsing routines, and it has paid off.<br /><br />For reference, altering a method that helped with removing boilerplate content from a web page (<i>boring</i>) had a greater benefit to the accuracy of our classifier than did dimensionality reduction and normalization combined (<i>sexy</i>).&nbsp; If you're not picking up what I'm putting down here, I'm saying that the really hard and less <i>science-y</i> improvements made the machine learning better than any of the shit you would read about in an ACM journal.<br /><b><br />This Is Going Somewhere I Promise</b><br /><br />This really is just a buttsore blog post, but I'm on a roll now.<br /><br />When I am working with the machine learning part of my job, I am rarely working in my development environment.&nbsp; Most of the real stuff is done in Excel.&nbsp; Well, at least it used to be, until I figured out that <a href="http://www.r-project.org/">GNU R</a> is so awesome it makes me want to fuck myself up with a chainsaw.<br /><br />When I make a change to the inputs of a machine learning method (support vector machine in this case), I need to verify that the change I just made was actually positive.&nbsp; And since that can't be done with a JUnit test, I have to get all scientific-method on that shit.&nbsp; Remember in college when you snoozed through advanced statistics because it sucked?&nbsp; Yeah, me too.&nbsp; Good thing I kept the book.<br /><br /><br /><br /><br />  
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

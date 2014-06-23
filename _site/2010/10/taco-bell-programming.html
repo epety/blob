@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Taco Bell Programming</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Taco Bell Programming</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Thursday, October 21, 2010
+  </div>
+
+  <div class="post-content"><img class="post-lead-image" src="/teddziuba/images/a-sysadmin-is-like-a-cocktail-waitress-at-a-strip-club-underappreciated-but-critical-to-business-success.jpg">Every item on the menu at Taco Bell is just a different configuration of roughly eight ingredients.  With this simple periodic table of meat and produce, the company pulled down $1.9 billion last year.</p>
+
+<p>The more I write code and design systems, the more I understand that many times, you can achieve the desired functionality simply with clever reconfigurations of the basic Unix tool set. After all, <em>functionality is an asset, but code is a liability</em>.  This is the opposite of a trend of nonsense called DevOps, where system administrators start writing unit tests and other things to help the developers warm up to them - Taco Bell Programming is about developers knowing enough about Ops (and Unix in general) so that they don't overthink things, and arrive at simple, scalable solutions.</p>
+
+<p>Here's a concrete example: suppose you have millions of web pages that you want to download and save to disk for later processing.  How do you do it?  The cool-kids answer is to write a distributed crawler in Clojure and run it on EC2, handing out jobs with a message queue like SQS or ZeroMQ.</p>
+
+<p>The Taco Bell answer? <code>xargs</code> and <code>wget</code>. In the rare case that you saturate the network connection, add some <code>split</code> and <code>rsync</code>. A "distributed crawler" is really only like 10 lines of shell script.</p>
+
+<p>Moving on, once you have these millions of pages (or even tens of millions), how do you process them? Surely, Hadoop MapReduce is necessary, after all, that's what Google uses to parse the web, right?</p>
+
+<p>Pfft, fuck that noise:</p>
+
+<blockquote><code>find crawl_dir/ -type f -print0 | xargs -n1 -0 -P32 ./process</code></blockquote>
+
+<p>32 concurrent parallel parsing processes and zero bullshit to manage. Requirement satisfied.</p>
+
+<p>Every time you write code or introduce third-party services, you are introducing the possibility of failure into your system.  I have far more faith in <code>xargs</code> than I do in Hadoop. Hell, I trust <code>xargs</code> more than I trust myself to write a simple multithreaded processor. I trust syslog to handle asynchronous message recording far more than I trust a message queue service.</p>
+
+<p>Taco Bell programming is one of the steps on the path to Unix Zen. This is a path that I am personally just beginning, but it's already starting to pay dividends. To really get into it, you need to throw away a lot of your ideas about how systems are designed: I made most of a SOAP server using static files and Apache's <code>mod_rewrite</code>. I could have done the whole thing Taco Bell style if I had only manned up and broken out <code>sed</code>, but I pussied out and wrote some Python.</p>
+
+<p>If you don't want to think of it from a Zen perspective, be capitalist: you are writing software to put food on the table.  You can minimize risk by using the well-proven tool set, or you can step into the land of the unknown. It may not get you invited to speak at conferences, but it will get the job done, and help keep your pager from going off at night.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

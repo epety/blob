@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Disable The Annoying Thing In Ubuntu Jaunty</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Disable The Annoying Thing In Ubuntu Jaunty</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, April 25, 2009
+  </div>
+
+  <div class="post-content"><img alt="at-least-they-didnt-fuck-up-my-nvidia-drivers-this-time.jpg" src="/teddziuba/images/at-least-they-didnt-fuck-up-my-nvidia-drivers-this-time.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="230" width="160" />I upgraded to Ubuntu Jaunty Jackalope today.&nbsp; It was a positive experience until I opened Pidgin and Evolution and started using my computer.&nbsp; Jaunty has this new feature called NotifyOSD that application makers can use to bug the shit out of you at every possible moment.&nbsp; Someone signed online? Bug the shit out of the user.&nbsp; Received an e-mail, bug the shit out of the user.&nbsp; Joined a wireless network?&nbsp; You guessed it.&nbsp; Let's bug the shit out of the user.<br /><br />The old notifier used to stay out of your way.&nbsp; Get a little message or whatnot when you got a new e-mail.&nbsp; It was unobtrusive and didn't distract you while you're trying to figure out why some little bit of SQLAlchemy code is making too many calls to a database.&nbsp; But now, Canonical has found it necessary to make sure you're abundantly aware of every excruciating detail of your computer's operation.&nbsp; Productivity be damned.<br /><br />I don't know whose bright idea this feature was, but whoever it is is trying to spread their terminal case of attention deficit disorder to the rest of the world.&nbsp; Fuck you.&nbsp; Grind up your Adderall pills and snort them until your heart shits out like a Chevy.<br /><br />Anyway, if you don't know what I'm talking about, this is the offending window:<br /><br /><img alt="i-hope-youre-proud-of-yourself.png" src="/teddziuba/images/i-hope-youre-proud-of-yourself.png" class="mt-image-center" style="margin: 0pt auto 20px; text-align: center; display: block;" height="476" width="733" /><b>How To Turn This Thing Off</b><br /><br />Open up a command line.&nbsp; Type this:<br /><br /><code>sudo mv /usr/share/dbus-1/services/org.freedesktop.Notifications.service /usr/share/dbus-1/services/org.freedesktop.Notifications.service.disabled</code><br /><br />And restart your computer.&nbsp; You could probably restart the dbus daemon, but that makes a lot of things go ill on your machine.<br /><br />This disables the notifier for good.&nbsp; Now you can get back to work.<br /> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

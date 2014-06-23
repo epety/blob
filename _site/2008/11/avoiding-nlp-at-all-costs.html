@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Avoiding NLP At All Costs</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Avoiding NLP At All Costs</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Thursday, November 13, 2008
+  </div>
+
+  <div class="post-content"><img alt="hurrdurr.gif" src="/teddziuba/images/hurrdurr.gif" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="286" width="317" />I'm working with a startup now on a text summarization project.&nbsp; The requirements are fairly loose: "take all this text and make it smaller", solving the tl;dr problem (too long; didn't read).&nbsp; There are a couple of critical details, namely identifying the sentiment of the text, and a few others that are excruciatingly domain-specific.<br /><br />At first glance, this seems approachable with some natural language processing libraries.&nbsp; Oh no.&nbsp; There be dragons.&nbsp; At Pressflip, I had myself into a few NLP libraries, and the only takeaway I got from all that experience was <i>"Don't use NLP.&nbsp; Ever."</i><br /><br />Why?&nbsp; NLP is yucky.&nbsp; It's complicated, the field is rife with academic shitheaddery, there are some major-asspain licensing issues with a couple of software packages and best of all, it's balls slow.&nbsp; Plus, if you venture down the road of natural language processing, the law of diminishing returns will pull you into a dark alley, pummel you with a tire iron, take you wallet, and then just to be a prick, steal your shoes so you need to walk home barefoot.<br /><br />My point is, for 99 practical projects out of 100, you can cheat your way out of NLP.&nbsp; Cook up some fancy shit with word frequencies and logarithms.&nbsp; Reach back into your information retrieval notes for inspiration.&nbsp; TF*IDF can take you a long way if you know how to use it.<br /><br />When I was brainstorming the project I'm working on, my first thought was some hand-waving business about a part-of-speech tagger and a Markov Chain to figure out probabilities of part-of-speech transitions and all that fancy shit.&nbsp; Factor in a little bit of sentiment detection from God-knows-where and that was my sketch.&nbsp; Then practicality set in: how much time do you want to spend on this?&nbsp;<b> If you are considering NLP as the answer to a real problem, it's virtually certain that you're overthinking it</b>. <br /><br />That being said, NLP does have its place: <a href="http://www.powerset.com/">making the best fucking Wikipedia search engine there ever was with technology licensed from Xerox and then selling yourself to Microsoft</a>.<br />  
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Amazon &mdash; The Purpose of Pain</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Amazon &mdash; The Purpose of Pain</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, April 23, 2011
+  </div>
+
+  <div class="post-content"><p><img src="/teddziuba/images/juggalos-welcome-but-kings-of-leon-fans-need-not-apply.jpg" class="post-lead-image"/>Pain is nature's way of telling you that you have just fucked up.  It's a hint to your future self that maybe you should never do that again. Yet, you dumbasses continue to host things full-bore in Amazon. Since its inception, EC2 has gone down, S3 has dropped off the face of the earth, and Amazon's Elastic Block Store bludgeons Reddit to death every few weeks, but yet every time, the <a href="http://broadcast.oreilly.com/2011/04/the-aws-outage-the-clouds-shining-moment.html" rel="nofollow">apologists</a> line up. (Since it's foolish to waste a perfectly good crisis, some jackass is even selling an <a href="http://www.ablebots.com/ec2enabled/">eBook</a> about how to design your service around EC2 failures).</p>
+
+<p>There's a point where "I told you so" doesn't quite fit, so in light of Amazon's most recent aristocrats joke, let's explore some common myths about Cloud Computing that developers actually believe.</p>
+
+
+<h3>Myth 1: SLAs Are Meaningful</h3>
+<p>Amazon EC2 has a stated service level agreement of 99.95% uptime, yearly. As of right now, EC2's uptime is 99.23%, well below the SLA. Since computer programmers like to take a pathologically literal interpretation of the law and contracts, they usually don't understand the reality of such matters.</p>
+
+<p><em>"But, but, EC2 is violating their SLA! That can't happen!"<br/>
+"It just did."<br/>
+"But, but...Segmentation Fault (core dumped)"</em></p>
+
+<p>The trouble with SLAs is that <strong><em>shit happens</em></strong> is not yet in the vernacular of modern jurisprudence.  You should never try to compare hosts based on SLA, compare them based on how they respond to downtime, because it will happen everywhere you go, without fail. For example, the machine that is serving you this web page is a physical box hosted by SoftLayer at a data center in Seattle. Last week, I had about an hour worth of downtime because of some networking problems in their data center. Whatever, like I said, <em>shit happens</em>. What I'm really looking for is communication. I logged a ticket with support, and in six minutes they updated me about the situation, how widespread it was, and an ETA on the fix. The tech also asked if there was anything else he could do for me. They restored connectivity quickly, but did not keep me in the dark about what was going on.</p>
+
+<p>Try that with Amazon. There's a <a href="https://forums.aws.amazon.com/thread.jspa?threadID=65649&tstart=0">thread</a> on the AWS forum where some genius decided to host safety critical software on EC2, and can't get his data up. The thread was posted on Friday, it's now Saturday, and with Sunday coming afterward, I'm pretty sure that nobody whose safety depends on EC2 is lookin' forward to the weekend. Now, maybe it's a troll, but not even a "we're working on it" reply?</p>
+
+<h3>Myth 2: Architecture Will Save You from Cloud Failures</h3>
+
+<p>Fault-tolerant architecture a centerpiece of the NoSQL dog and pony show, but by and large, the programmers using it don't understand that the software depends on hardware. Note, I said <em>hardware</em> not <em>virtual machines</em>. The trouble with using virtual machines is that your visibility into the actual metal of the device ends at the hypervisor.  There are certain things that software packages must hold sacrosanct, for example, the <code>fsync()</code> system call, that instructs the kernel to make sure that data is written to physical disk. In virtual machine land, whether or not <code>fsync()</code> does what it should is a bit of a mystery. This gets even more entertaining with Amazon Elastic Block Store, which, as the Reddit administrators have found, will happily accept calls to <code>fsync()</code>, and lie to your face, saying that the data has been written to disk, when it may not have been.</p>
+
+<p>No amount of architecture is going to save you from lying virtual hardware. Applications, especially databases, are built on the assumption that there is an atomic way to commit data to disk. Sure, there are problems with disk writeback caches sometimes, but anybody who knows what they are doing can check to see if it's actually going to be an issue. If you're running on Amazon's virtual machines, take a guess; it's turtles all the way down.</p>
+
+
+<h3>Myth 3: A Virtual Machine is an Appropriate Gift for All Occasions</h3>
+
+<p>This, perhaps, is the cause of such widespread service downtime &mdash; developers who are hosting entire services full-bore on virtual machines. VMs have their place, sure, but they are by no means the solution to every hardware problem. In my experience, you should use VMs for:
+
+<ul>
+  <li>Web application servers</li>
+  <li>Offline data processing</li>
+  <li>Squid/Memcache servers</li>
+  <li>One-off utility computing</li>
+</ul>
+
+The general rule is that if the machine eats shit, nothing of value will be lost. Remember what I said about pain in the beginning? If you're hosting a database on a VM, well, at some point it will become abundantly obvious.</p>
+
+<p>The trouble with "commodity" computing is that servers are not really something that should be commoditized. There is so much variability in these devices that a "six sizes fit all" offering is insulting. The things you can do with disk controllers alone are more than worth the effort to colocate hardware in a data center. Personally, I prefer to solve problems with hardware than software, for example, throwing SSD drives in a database machine that is dogging it on disk I/O. It's much more business-efficient to throw money at performance problems than it is to throw code at them, but I guess some of you guys just really like to type.</p>
+
+<p>Personal preference, I suppose.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+teddziuba.com:
+  custom_css:
+    screen.css:
+      - my-screen.css
+
+  semantic_classes:
+    "#blog-frame": ".shadow .append-2 .prepend-2 .prepend-top .append-bottom"
+    "#header": ".span-20 .prepend-top .last"
+    ".blog-name": ".neo-retro"
+    "#content": ".last"
+    ".byline": ".quiet .byline-margin"
+    "#footer": ".footer-padding .last"
+    ".footer-items": ".footer-ul"
+    ".footer-props": ".quiet"

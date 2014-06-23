@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Hermetic RPC Unit Testing With Thrift and jMock</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Hermetic RPC Unit Testing With Thrift and jMock</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Friday, February 01, 2008
+  </div>
+
+  <div class="post-content">Unit testing is a pain in the ass.&nbsp; I will admit it, I hate doing it.&nbsp; More often than not, you just write a few obvious JUnit tests that you know will pass and say you're finished.<br /><br />Testing code that makes RPC calls is especially discouraging.&nbsp; You'll say <i>"I can't unit test it, it needs to set up an RPC server and that's too complicated for JUnit"</i>, or, if you're like me, you won't even make up an excuse.<br /><br />Of course, this laziness comes back to bite you when the code goes into production, the RPC server throws a one-in-a-million exception, and your entire service bites the dust because you never tested that execution path.<br /><br />So, given that you don't like to be woken up at 3AM by sysops when you have been out drinking all night, let's unit test our RPC clients.&nbsp; Let's do it without having to start up an RPC server when the test runs, and it would be nice to be able to have fine-grained control over the RPC methods.<br /><br /><font style="font-size: 1.25em;"><b><font style="font-size: 1em;">She's Thrifty - She's Just My Type</font><br /></b></font><font style="font-size: 1.25em;"><br /><font style="font-size: 0.8em;">This is the Thrift RPC definition we will be using for this example:</font><br /><br /></font>
+<pre>service MyRPCService {
+  i64 getDocidForUrl(1: string url),
+}</pre>
+
+Simple.  We'll be looking up a 64-bit integral document identifier for a given URL.  Our client code will make a decision about the state of the document given that identifier.<br /><br />This is the class we will be testing:<br /><br />
+
+<pre>public class ProgramToTest {
+
+	// class constants
+	private static final int RPC_SERVER_PORT = 3141;
+	private static final String RPC_SERVER_HOST = "rpcserver.teddziuba.com";
+	private static final long DOCID_IS_OLD_IF_LESS_THAN = 1000;
+	public static enum DocumentStatus { OLD, NEW, UNKNOWN };
+	
+	// instance variables
+	private MyRPCService.Iface myRpc;
+	private TSocket socket;
+	
+	public ProgramToTest() {}
+	
+	private void init() throws TTransportException {
+		socket = new TSocket(RPC_SERVER_HOST, RPC_SERVER_PORT);
+		TProtocol protocol = new TBinaryProtocol(socket, true, true);
+		myRpc = new MyRPCService.Client(protocol);
+		socket.open();
+	}
+	
+	public Enum<DocumentStatus> getDocumentStatus(String documentUrl) {
+		try {
+			long docId = myRpc.getDocidForUrl(documentUrl);
+			if (docId &lt; DOCID_IS_OLD_IF_LESS_THAN) {
+				return DocumentStatus.OLD;
+			}
+			return DocumentStatus.NEW;
+		} catch (TException e) {
+			return DocumentStatus.UNKNOWN;
+		}
+	}
+	
+	public void finished() {
+		socket.close();
+	}
+	
+}
+</DocumentStatus></pre>
+
+If I were still in CS class in college, I would get dinged for having multiple <code>return</code> statements, but the best part about being a grown up is that when I want a cookie, I can have a cookie.<br /><br /><br />
+
+The <code>getDocumentStatus</code> is really the only thing we need to test, as clients of this class will be responsible for dealing with a <code>TTransportException</code> if the socket initialization fails.  The unfortunate part about testing that method is that it makes an RPC call. <i>Sockets. Exceptions. Icky.</i>  Even though it's easier to say screw it and go have a beer, remember: <b><i>you gotta do what you gotta do</i></b>.<br /><br /><font style="font-size: 1.25em;"><b>Making a Mockery</b></font><br /><br /><a href="http://www.jmock.org/">JMock</a> is a clever unit testing library that makes mock objects really easy.&nbsp; If you're new to mock objects, read more about them <a href="http://www.mockobjects.com/">here</a>.&nbsp; The basic idea is that we will make an object that "mocks" the behavior of the RPC server, but without doing any I/O.&nbsp; That way, we have complete control over the operations of the server, and can actually test how your client code interacts with that one-in-a-million exception.<br /><br />We'll be mocking out the <code>MyRPCService.Iface</code> interface that is autogenerated by Thrift, and defining our own behavior for it.  If you've got some experience with JMock, this should be pretty straight forward, and if not, then you'll catch on quick.  JMock's syntax focuses on making the testing conditions human readable.<br /><br /><font style="font-size: 1.25em;"><b>Prepare The Class For Testing</b></font><br /><br />
+
+Since we will be providing the <code>ProgramToTest</code> class with a mocked version of this interface, we need to add a constructor to the class for testing only:<br /><br />
+
+<pre>public ProgramToTest(MyRPCService.Iface testOnlyIface) {
+	this.myRpc = testOnlyIface;
+}
+</pre><font style="font-size: 1.25em;"><b>
+
+JUnit.&nbsp; We In It.</b></font><br /><br />We'll test the low-hanging fruit first.&nbsp; Using our mock to control the return value of the RPC call, we can make sure the logic works:<br /><br /><br />
+
+<pre>@Test
+public void testHandlesOldDocid() throws TException {
+	final MyRPCService.Iface mockedRpc = context.mock(MyRPCService.Iface.class);
+	ProgramToTest testObject = new ProgramToTest(mockedRpc);
+		
+	final long rpcCallReturnValue = 100L;
+	final String testUrl = "http://www.teddziuba.com/";
+		
+	context.checking(new Expectations() {
+		{
+			one(mockedRpc).getDocidForUrl(with(equal(testUrl)));
+			  will(returnValue(rpcCallReturnValue));
+		}
+	});
+				
+	assertEquals(ProgramToTest.DocumentStatus.OLD,
+                               testObject.getDocumentStatus(testUrl));
+}
+</pre>
+
+That is pretty cool.&nbsp; Without a whole lot of effort, we've managed to make a unit test for a method that depends on an RPC server.&nbsp; This test does not require any network I/O and runs very quickly.&nbsp; It can be run in a self-contained environment, like an automated test server.&nbsp; I call this kind of test <i>hermetic</i>, because nothing outside of the test code can affect its outcome.<br /><br />We can also use JMock to test what happens when an exception is thrown.&nbsp; If a Thrift RPC server throws an exception somewhere in its handler method and that exception is not caught server-side, it will be thrown up to the client as a <code>TException</code>.&nbsp; To simulate this, we simply change one line of the test expectations:<br /><br /><br />
+
+<pre>@Test
+public void testHandlesException() throws TException {
+	final MyRPCService.Iface mockedRpc = context.mock(MyRPCService.Iface.class);
+	ProgramToTest testObject = new ProgramToTest(mockedRpc);
+		
+	final TException rpcException = new TException("something awful has happened.");
+	final String testUrl = "http://www.teddziuba.com/";
+	
+	context.checking(new Expectations() {
+		{
+			one(mockedRpc).getDocidForUrl(with(equal(testUrl)));
+			  will(throwException(rpcException));
+		}
+	});
+				
+	assertEquals(ProgramToTest.DocumentStatus.UNKNOWN,
+                                testObject.getDocumentStatus(testUrl));
+}
+</pre><font style="font-size: 1.25em;"><b>
+
+Go And Do Likewise</b></font><br /><br />JMock is an incredibly useful library.&nbsp; If you're a lazy tester like me, it beats the pants off of subclassing.&nbsp; Now, you have no excuse for leaving RPC calls untested.<br /> 
+<br />
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

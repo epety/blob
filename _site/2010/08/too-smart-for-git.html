@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Too Smart for Git</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Too Smart for Git</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Sunday, August 01, 2010
+  </div>
+
+  <div class="post-content"><img class="post-lead-image" src="/teddziuba/images/the-fundamental-thought-that-drives-a-womans-every-action-is-that-somewhere-a-man-is-relaxing.jpg">
+
+<p>The worst part about Git is the "Git-SVN Crash Course" tutorial, because it will convince a newcomer that their understanding of how source control works transfers smoothly to Git.  If you combine that with the fact that most smart people simply refuse to read documentation and will just mash on the keyboard until it <em>appears</em> to work, it means that teams who are starting out using Git are on the yellow brick road to a world of hurt.</p>
+
+<p>Git follows Linux's philosophy of refusing to protect you from yourself. Much like Linux, Git will sit back and watch you fuck your shit right up, and then laugh at you as you try to get your world back to a state where up is up and down is down. As far as source control goes, not a lot of people are used to this kind of free love.</p>
+
+<p>Milo has been using Git from the get-go, and the git pull/git push with a central repository works well enough when you only have a handful of developers.</p>
+
+<img class="mt-image-center" src="/teddziuba/images/good-luck-untangling-that-commit-history.png">
+
+<p>This fits with the Subversion worldview that a benevolent central server will never lead you astray.  The first time you get some error about not being able to push non-fast-forward commits to origin, you kind of gloss over it, and a <code>git pull</code> fixes you right up. If you understand Git as you understand SVN, you can easily mistake this error for something like "oh, I just have to do a merge because someone else's commits beat me to it". Well, technically that's right, but for the wrong reasons.  Using this model, if you think of the developers as different threads sharing the origin repository resource, Git is putting lock on the <em>whole repository</em>, as opposed to individual files. With a lot of threads sharing a coarsely-locked resource, there's always going to be contention. However, in a small enough team, it's workable to think of it this way.</p>
+
+<p>This is where smart people run into trouble.  We know in the backs of our minds that something is just a little off about that non-fast-forward-commit error message, but everything looks fine, so why go read about what's going on? I am generally not a fan of reading documentation until I am debugging a problem, because I expect software to behave as it would if I wrote it. Good documentation is condescendingly terse, and Git's documentation is like an art critic who giggles at you. (<em>The description of git-rebase is "Forward-port local commits to the updated upstream head". Oh, fuck off.</em>)</p>
+
+<p>In the last couple of weeks, we started using Gerrit for code reviews, and anyone who was using Git like a translation table for SVN commands just heard the bell ring at the School of Hard Knocks.</p>
+
+<img class="mt-image-center" src="/teddziuba/images/rebase-ooh-that-sounds-fun.png">
+
+<p>Gerrit acts as an intermediary between developers and the origin repository. You send commits to Gerrit and it holds them in purgatory until they are signed off on by another developer. Then, if the commit applies cleanly to the branch, Gerrit applies it. Otherwise, it asks you to upload a merge commit, which is where the fun <em>really</em> starts.</p>
+
+<p>The upside to this system is that it prevents other peoples' <code>git-fuckups</code> from becoming your <code>git-fuckups</code>. The downside is that because commits are held in this transient state, it's very easy to lay a path of destruction through your local repository with <code>rebase</code> and <code>merge</code> if you don't completely grok what's going on. Like old skid marks on a highway, our codebase is peppered with merge commits and cherry-picks that are the only living records of a series of oh-shit moments.</p>
+
+<p>The problem isn't that Git is to hard, it's that smart developers are impatient and have exactly zero tolerance for unexpected behavior in their tools. While Git is the trendy thing right now, perhaps some day you will come across a grizzled developer who is using SVN, and when you ask him why, his answer won't make sense, because it's a Zen thing.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

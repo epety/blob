@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Porter Stemming Makes Me Rage</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Porter Stemming Makes Me Rage</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Wednesday, July 23, 2008
+  </div>
+
+  <div class="post-content"><img alt="not_illegal_in_thailand.jpg" src="/teddziuba/images/not_illegal_in_thailand.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="267" width="334" /> <div>I have no formal training in natural language processing.&nbsp; As such, I figure out a lot of this shit on my own.<br /><br />One of the simplest concepts in NLP/text mining is stemming.&nbsp; If you're not in the know, to stem a word is to remove all the unnecessary shit after its root.<br /><br />For example, "computer", "computing" and "compute" all stem to "comput".&nbsp; Same root, virtually the same meaning.<br /><br />Something like this is clearly useful in a search engine like Pressflip, because if somebody searches for "iphone" (and a <i>lot</i> of you people are), the engine should pull up documents that contain the plural (iphones) of the word.<br /><br />The canonical algorithm for doing this sort of thing is called the Porter Stemming Algorithm, which considers each word on its own.&nbsp; Porter works great 99% of the time, but when it fails, it fucks you <i>hard</i>.<br /><br /><b>Why You Keep Tryin To Say That Word?</b><br /><br />A good example of this comes from the pressflip query logs.&nbsp; A user searched for "marketing".&nbsp; Perfectly reasonable.&nbsp; Porter stemmed that to "market", which returned a bunch of search results about the Dow Jones and Nasdaq.&nbsp; Ouch. Right in the butt.<br /><br />What went wrong?&nbsp; In smart-talk, the bare infinitive that corresponds to the gerund has a different meaning than the gerund.&nbsp; Again, I know dick-shit about NLP, so maybe you guys have a serious-business name for this sort of thing.<br /><br />So yeah, gerunds make Porter suck sometimes.<br /><br />There are some other failure cases I've discovered.&nbsp; Proper nouns will give it to you Clydesdale-style, too.&nbsp; More specifically, proper nouns that don't stem to themselves.&nbsp; Example: "Mariners" and "Marin" both share the same stem.&nbsp; So potentially, someone searching for the baseball team from Seattle will come up with news about the hoity-toity town across the Golden Gate Bridge from San Francisco.<br /><br />What's the answer to this?&nbsp; If you're a company with millions in VC lottery winnings, you can pay Basistech $100,000 for a 3-year license of their context sensitive stemmer.&nbsp; If you're me, though, you make exclusion lists.&nbsp; Big ones.<br /><br />That being said, after a large re-processing this weekend, Pressflip search quality is going to improve.<br /></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

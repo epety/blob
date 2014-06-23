@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Eclipse Crashes in Ubuntu Hardy Heron</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Eclipse Crashes in Ubuntu Hardy Heron</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, April 26, 2008
+  </div>
+
+  <div class="post-content">I just upgraded my workstation to Hardy and got a SIGSEGV when starting Eclipse.&nbsp; It appears to be a bug in the Sun JVM that ships with Hardy, and it only happens on AMD64.<br /><br />If you're set on using this runtime, the fix is to disable the JIT compiler by launching Eclipse with -Xint, but that's comes with a severe performance penalty.<br /><br />The fix I used was to simply downgrade the Hardy JRE (6-06-0ubuntu1) to the Gutsy version (6-03-0ubuntu2).&nbsp; You'll have to edit /etc/apt/sources.list to add a Gutsy repository.<br /><br />I'm pretty sure this is the Sun bug: <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6614100">http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6614100</a><br /><br />And this is the Ubuntu bug: <a href="https://bugs.launchpad.net/ubuntu/+source/eclipse/+bug/174759">https://bugs.launchpad.net/ubuntu/+source/eclipse/+bug/174759</a><br /><br />  
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

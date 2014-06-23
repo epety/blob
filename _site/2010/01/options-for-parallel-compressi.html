@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Options for Parallel Compression</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Options for Parallel Compression</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Friday, January 15, 2010
+  </div>
+
+  <div class="post-content"><img alt="when-a-couple-gets-a-dog-its-like-saying-we-want-a-baby-but-dont-want-to-go-to-jail-if-it-dies-by-accident.jpg" src="/teddziuba/images/when-a-couple-gets-a-dog-its-like-saying-we-want-a-baby-but-dont-want-to-go-to-jail-if-it-dies-by-accident.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="255" width="288" />At Milo, I pretty frequently need to pull data down from production to my workstation to test some new code. That's what happens when you raise a Series A round - you can't live-edit production data anymore. I think it's in the term sheet somewhere.<br /><br />Anyhow, I was pulling down a 14GB MySQL database dump today. Trying to compress it through plain Jane gzip was pretty slow, so I looked for some parallel options. The server I was pulling from has 16 cores, so I figured I could make use of them.&nbsp; Anyhow, here's what I found:<br /><br /><ul><li><a href="http://compression.ca/pbzip2/">pbzip2 - Parallel BZIP2</a>: Parallel implementation of BZIP2. BZIP2 is well known for being balls slow, so speed it up using multiple CPUs.</li><li><a href="http://www.zlib.net/pigz/">pigz - Parallel GZIP</a>: Parallel implementation of GZIP written by Mark Adler (guy who co-authored zlib and gzip, so you can be reasonably confident he has his shit together).</li></ul>On the 14GB database dump, both are faster than vanilla GZIP. Because Hacker News and Reddit both love this shit, here are the timing stats:<br /><br /><ul><li>Plain gzip, default compression level: 11 minutes, 58 seconds. Resultant file is 2.3GB.</li><li>pbzip2, default compression level: 8 minutes, 48 seconds. Resultant file is 1.7GB.</li><li>pigz, default compression level: 1 minute, 33 seconds. Resultant file is 2.3GB.</li></ul>Again this was on a 14GB database dump file, on a 16-core machine, with Intel solid state disks.<br /><br />If any readers know of other parallel compression schemes I can try, e-mail me and let me know. I will post stats here.<br /> <div><br /></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Shut Your Face, Commons Httpclient</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Shut Your Face, Commons Httpclient</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Thursday, December 18, 2008
+  </div>
+
+  <div class="post-content">If you're like me and every other user on the planet, you don't give a shit when an SSL certificate doesn't validate.&nbsp; Unfortunately, commons-httpclient was written by some pedantic fucknozzles who have never tried to fetch real-world webpages. <br /><br />If you want to turn off SSL certificate validation in httpclient, do this:<br /><br />1. Put <a href="http://juliusdavies.ca/commons-ssl/download.html">not-yet-commons-ssl.jar</a> on your classpath.<br />2. Execute the following method before you start any SSL connections:<br /><br /> 
+
+<pre><code>
+public static void trustAllCerts() throws GeneralSecurityException, IOException {
+	ProtocolSocketFactory sf = new EasySSLProtocolSocketFactory();
+	Protocol p = new Protocol("https", sf, 443);
+	Protocol.registerProtocol("https", p);
+}
+</code></pre>
+
+This essentially makes commons-httpclient accept every SSL certificate it gets.&nbsp; Yeah, that's what I thought.  Who's bitching now? 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

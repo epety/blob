@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Don't Serialize Java Objects In Hadoop SequenceFiles</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Don't Serialize Java Objects In Hadoop SequenceFiles</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Tuesday, April 08, 2008
+  </div>
+
+  <div class="post-content">Not if you can avoid it, at least.<br /><br />Hadoop provides you with the <code>Writable</code> interface if you want to write your object to a <code>SequenceFile</code>.&nbsp; It's up to you to implement the <code>write()</code> and <code>readFields()</code> methods for your object.&nbsp; It's easy if your object is simple: just write each of your instance variables to a <code>DataOutput</code> and read them back in the same order from a <code>DataInput</code>.<br /><br /><b>Don't Write Your Object As A Serialized Byte Array<br /></b><br />I got lazy when I was implementing the Writable interface with one of our classes because it had a ton of instance variables.&nbsp; I figured I'd just serialize it to a byte array, then write the array length and the whole array to the DataOutput.&nbsp; And on the read, well, just unserialize the object from the byte array.&nbsp;&nbsp; This was my <code>write()</code>:<br /> 
+
+<pre><code>
+@Override
+public void write(DataOutput out) throws IOException {
+	ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+	ObjectOutputStream objectOut = new ObjectOutputStream(byteOutStream);
+		
+	objectOut.writeObject(getContainedObject());
+	objectOut.close();
+		
+	byte[] serializedObject= byteOutStream.toByteArray();
+		
+	out.writeInt(serializedObject.length);
+	out.write(serializedModel);
+
+}
+</code></pre>
+
+Naw, dude.  Bad idea.<br /><br />I knew that I'd be paying some overhead in both space and time for this little scheme, but I didn't know how much.&nbsp; It was just a little bit per object, but when we started seeing MapReductions take way too much time in I/O, it was time to revisit this.<br /><br /><b>What This Cost In Space And Time</b><br /><br />First, the Java serialization space overhead.&nbsp; On a toy example of this object, serialization to a byte array used 953 bytes.&nbsp; Properly writing out the instance variables consumed 296 bytes.&nbsp; In production, doing it the right way shrunk a 1,600-record <code>SequenceFile</code> from 1.4GB to 825MB.<br /><br />Time savings were great, too.&nbsp; In the same toy example, it took my JVM 7.2 milliseconds to serialize the object and 1.7 milliseconds to unserialize.&nbsp; Doing with with stream I/O only took 76,000 nanoseconds to serialize, 58,000 nanoseconds to unserialize.<br /><br />I love order-of-magnitude improvements.<br /><br />Lesson learned: get off your lazy ass and do it right.<br /> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

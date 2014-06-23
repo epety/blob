@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>JavaFX Native Look and Feel</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">JavaFX Native Look and Feel</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, May 10, 2008
+  </div>
+
+  <div class="post-content">I have been toying around with JavaFX, Sun's answer to Adobe AIR and Microsoft Silverlight.&nbsp; Since JavaFX is pretty much an easy way to do Swing, you can get Swing's pluggable look and feel in Java FX programs.&nbsp; Thank Christ, because the Swing UI components look like shit:<br /><br /><img alt="demo-swing.png" src="/teddziuba/images/demo-swing.png" class="mt-image-center" style="margin: 0pt auto 20px; text-align: center; display: block;" height="90" width="512" /><br /> <div>Versus the GTK look and feel:<br /><br /><img alt="demo-gtk.png" src="/teddziuba/images/demo-gtk.png" class="mt-image-center" style="margin: 0pt auto 20px; text-align: center; display: block;" height="94" width="477" /><br />This was done by adding the following snippet to my JavaFX code:<br /><br /></div><pre><code>
+import javax.swing.UIManager;
+ 
+ UIManager.setLookAndFeel(
+            UIManager.getSystemLookAndFeelClassName()); </code></pre><br />Oh neat, native UI components. 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

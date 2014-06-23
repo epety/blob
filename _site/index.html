@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Ted Dziuba</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div id="post-list">
+
+<div class="post-container">
+  <h2 class="post-title"><a href="/teddziuba/2012/02/butthurt-in-the-valley.html">Dan Lyons vs. The Valley</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Sunday, February 12, 2012
+  </div>
+
+  <div class="post-content"><p><img src="/teddziuba/images/bring-back-that-numa-numa-kid.jpg" class="post-lead-image">
+Evidently Dan Lyons is on the warpath now, against MG Siegler and Mike Arrington, formerly of TechCrunch, now of CrunchFund. You remember Dan Lyons, he was entertaining for about five minutes a couple of years ago as Fake Steve Jobs? This sort of depraved cannibalism is common in Silicon Valley tech media, so it should surprise nobody.
+</p>
+
+<p>But I missed it all, I was too busy building a product.</p>
+
+<p>See, when people spend all day making absolutely nothing any more valuable, they leave fingerprint smudges all over shit that used to be nice. That's a general observation: tech journalists, the government, anywhere that people are comfortable.</p>
+</div>
+</div>
+
+<div class="post-container">
+  <h2 class="post-title"><a href="/teddziuba/2011/12/process.html">Who Needs Process?</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Tuesday, December 27, 2011
+  </div>
+
+  <div class="post-content"><p>
+<img src="/teddziuba/images/if-there-was-a-god-strippers-would-be-his-chosen-people.gif" class="post-lead-image" style="position: relative; top: -80px; left: 0; margin-bottom: -80px;">
+
+Software development methodology is organizational Valtrex. Sure, it treats a symptom, but the only cure for the underlying disease is to <em>never have contracted it in the first place</em>. This is not to say that process and methodology are bad. They are means to an end. But the ability of your team to execute on a goal is inversely proportional to the amount of process you have in place. It's not a direct correlation, though. The underlying cause is that the variance of developer skill on your team is too high, which means your team can't execute well, and you need process to wrangle the laggards.</p>
+
+<p>
+Software development processes exist to manage the bell curve of ability in developers.  It's simple mathematics. The more people you collect on a team, the more likely it is that the team's average skill is the average skill of software developers as a whole. This is the Strong Law of Large Numbers, and it is non-negotiable. There's not a meeting you can hold to make it go away. Most organizations simply accept their fate, and design policies and procedures to keep the back half of the bell curve from causing damage. Unfortunately, policies and procedures irritate top performers, and are just more grievances on their list that will some day metastasize into a resignation letter. (Side note: if someone keeps such a list, there's a high probability they are a top performer.)
+</p>
+
+<p>So, how do you produce good software?</p>
+
+<h4>Rule 1: Resist Process from the Start</h4>
+<p>Anti-process needs to be in your blood from the beginning. Growing the team causes problems, but adding people who like to make process is catastrophic. Busybodies are toxic. When we were making Milo, the development process was, for a long time, loosely coordinated chaos. Of course this caused problems, and there are a few bodies in the codebase to prove it. When there was some big fuckup, a bunch of us would sit in a room (<em>mistake 1</em>), try to "trace the root" of the problem, which is code for "place blame" (<em>mistake 2</em>), and then figure out what process we need to put in place to make sure it never happens again (<em>mistake 3</em>).</p>
+
+<p>Every time we tried to force process on the team, it failed, because process was not part of the corporate culture. Here's a concrete example:</p>
+
+<p>Around the time we were raising our Series A financing, I was doing some maintenance work on our one and only database machine, Zeus. Because I had overconfigured Nagios, it was going apeshit as I was working, so I disabled all alerts for that machine. Sure enough, I forgot to re-enable alerts when I was done, and sure enough, that night, Zeus's RAID controller decided he'd had enough of our bullshit and up and died.</p>
+
+<p>The site was down for 6 hours and nobody noticed because we were all asleep. Do all the root cause analysis you want on that one, I fucked up, and everyone knew it. We tried policy: don't ever disable Nagios alerts, just tell people when you're working on something so they know to ignore the alerts. But nobody followed the policy because <em>homie don't play dat</em>.</p>
+
+<p>It turned out that nobody ever made that mistake ever again. Maybe it was just by chance, but maybe it's because of the Old Testament type stomping that the next person to do that would get.</p>
+
+<p>Learn from your mistakes, but don't flagellate yourself with them.</p>
+
+<h4>Rule 2: Grow Headcount as a Last Resort</h4>
+
+<p><em>Headcount is not a virtue</em>. Functionality is a virtue. Ability to execute is a virtue. But having a lot of people working on the project? No. It's a liability.</p>
+
+<p>The Strong Law of Large Numbers burns you when the team grows, so be reluctant to grow the team. When you think there is too much work for your current team to handle, do what any good programmer does: profile. Quantify the amount of time your team spends on every task, then figure out what you can optimize.</p>
+
+<p>When you do hire, do it carefully. Really carefully. ... More careful than that. At Milo, we do "trial periods", where we invite a candidate to work with us for a few days so we can judge their work. Here's a really simple trial period task: <em>make this thing better</em>. Use your judgment and your programming skills, just make it better. This will keep a common vision in your team.</p>
+
+<h4>Rule 3: Use The GitHub Workflow (And Other Good Stuff)</h4>
+
+<p>For brevity:</p>
+
+<img class="centered" src="/teddziuba/images/github-branch.png">
+
+<p>versus:</p>
+
+<img class="centered" src="/teddziuba/images/othergit.png">
+
+<p>Seriously, what the fuck is going on in that branch model? Policy and procedure, that's what. We used the latter branch model at Milo, as GitHub was not yet ready enough to support their awesome workflow. That complicated but popular workflow is vicious, there is just too much state to track in your head as a developer. It's not something you need to spend your time on.</p>
+
+<p>It's not specific to the GitHub workflow: your tooling should have the same attitude toward policy that your team does. GitHub's (the <em>software</em>, not the <em>company</em>) opinion is that process is unnecessary, and having the tools to support process will only beget process.</p>
+
+<p>If you leave enough handguns hanging around, eventually someone's going to get shot.</p>
+
+<p>If a tool is forcing process on you, or even encourages you to follow some process, ditch the tool and find another. Ticket tracker has a lot of fields on the ticket form? Dump it. Code review tool has a lot of shit going on? Find a new one. You get the idea. Don't let your tools infect you.</p>
+
+<h4>Rule 4: Just Let Go</h4>
+
+<p>This is the hardest one, and, if you're serious about doing away with process, is the one from which all others follow. Just stop having process. Cancel your weekly planning meetings. Get rid of your prioritized list of tasks. Stop having your daily stand-ups. No more status report e-mails.</p>
+
+<p>Just stop doing that stuff, and get rid of anyone who can't cope.</p>
+
+<p>Nothing terrible will happen.</p>
+
+<p>My current project, which will be launching in the first half of 2012, is as close to anarchy as a project can get. And it's working. I trust my teammates to get their work done and do it well. Sure enough, they do.</p>
+</div>
+</div>
+
+<div class="post-container">
+  <h2 class="post-title"><a href="/teddziuba/2011/11/dirty-words.html">Dirty Words</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Wednesday, November 09, 2011
+  </div>
+
+  <div class="post-content"><p>Anyone who ever told you that swear words have no place in technical discussion is
+right. They're right, and sadly, they're part of the problem because they
+miss the point. The sterile word placement that's supposed to support an argument
+makes any true motivation indistinguishable from all the hired bullshit.
+</p>
+
+<p>Objective technical discussion is a God damned lie, and it's the most rotten kind of lie
+because it's a way to stick your nose in the air, disguised as altruism.
+Every time you post benchmarks, you're not moving any discussion forward.
+When you compare web frameworks on one useless dimension or another, you don't
+bring any value to the world. What you've done is relieve me of a task that's kind of a
+pain in the ass, but by no means insurmountable. Ass scratching is not value.
+You want to be heralded as a great visionary for your work,
+and you think that getting on the front page of Hacker News or
+Reddit means that people respect your opinion.</p>
+
+
+<p>No. Your link is just space between the ads, and fuck-all if mine aren't too.</p>
+
+<p>The skill it takes to write objectively about technology can be automated, and publishing
+it yourself is disingenuous because it lacks passion.</p>
+
+
+<p>However, when someone starts swearing in technical discussion, showing emotion,
+that's a strong indicator that I'm about to receive wisdom.  Wisdom is
+earned the hard way, and it is permanent, not like some statistically shaky performance
+benchmark that we'll all forget about next week.</p>
+
+<p>Anyone who has ever told you that swear words are a cheap way to get an audience is
+right, too. I've been on both the amateur and professional side of technical journalism,
+and I'll tell you this: every way to get an audience is cheap. Let's take Paul Graham, for
+example. Any emotion you detect in his essays is purely by accident, but he conveys a
+message, and has a following. He would not have that following if he were some guy off
+the street, so rattling off any damn thing and putting a Paul Graham byline on it is a
+cheap way to get an audience.</p>
+
+<p>But admit it, somewhere in the back of your gut is a rebellious nerve that wonders what
+happens when Paul gets pissed off.</p>
+
+<p>People like me, Zed Shaw, and Zach Holman will give you a brutally honest answer if
+you ask for it. People like Paul won't. You will get a response, but it's in
+newspaper words. The same newspaper words, that, by the way, with their self-imposed
+emotional blockade, allow the nicest haircut to slither into the White House every couple
+of years.</p>
+
+<p>That's not to say that Paul is so proper in private. I don't know ﬁrst hand, but I have met
+other leaders in technology who are more than willing to give you an earful over
+cocktails. In public, however, they cultivate a persona.</p>
+
+<p>Just like I do.</p>
+</div>
+</div>
+
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

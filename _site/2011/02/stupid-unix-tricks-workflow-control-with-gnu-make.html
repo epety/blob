@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Stupid Unix Tricks: Workflow Control with GNU Make</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Stupid Unix Tricks: Workflow Control with GNU Make</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, February 26, 2011
+  </div>
+
+  <div class="post-content"><p><img src="/teddziuba/images/this-is-my-morning-work-face.png" class="post-lead-image"/>
+I was hacking around on part of a project last week that looked something like this:
+</p>
+
+<blockquote>
+Fetch an API Response &rarr; Validate response &rarr; Munge response &rarr; Write response to a DB
+</blockquote>
+
+
+<p>If any of the steps fail, then the whole production should stop or else Bad Things happen. Furthermore, I would like to be able to pick up where I left off in the process, should one of the steps fail - the validate step was somewhat CPU intensive, so I'd rather not lose that work if it succeeds. This is a pretty common workflow, so I wanted to apply as much of the Unix Way to it as I could, in hopes that my solution would be easier and more robust. That turned out to be true.</p>
+
+<h4>Makefile Abuse</h4>
+
+<p>As chance would have it, GNU Make solved this problem for me without a whole lot of effort. Here's what my makefile looked like:</p>
+
+<pre>
+api_response.json:
+    curl -o api_response.json http://api.company.com/endpoint
+
+validated_response.json: api_response.json
+    validate_response -o validated_response.json api_response.json
+
+munged_response.json: validated_response.json
+    munge_response -o munged_response.json validated_response.json
+
+update_database: munged_response.json
+    copy_response_to_db munged_response.json
+
+clean:
+    rm -f munged_response.json
+    rm -f validated_response.json
+    rm -f api_response.json
+
+.PHONY: update_database clean
+</pre>
+
+<p>To execute the workflow, I invoke <code>make -f workflow.mk update_database</code>, which will do the following:
+
+<ol>
+  <li>Compute the dependency tree: <code>munged_response.json</code> depends on <code>validated_response.json</code> which depends on <code>api_response.json</code>.</li>
+  <li>If any of these files is not on disk, it will recursively execute the <code>make</code> targets to build the missing ones.</li>
+  <li>Update the database</li>
+  <li>If any of the recursive execution fails (command returns nonzero), freak the fuck out and print an error message.</li>
+</ol>
+
+The <code>.PHONY</code> line tells <code>make</code> that the <code>clean</code> and <code>update_database</code> targets are always out of date, and need to be run every time.
+</p>
+
+<h4>Graceful and Robust</h4>
+<p>There are a couple of things that I really like about this gadget:</p>
+
+<ul>
+  <li><strong><em>Fail-fast execution:</em></strong> if any of the steps before <code>update_database</code> fail, the database doesn't get updated.</li>
+  <li><strong><em>Pick up where you left off:</em></strong> if <code>munge_response</code> fails after the fetch and validate steps succeed, the next time it executes, it won't fetch & validate again unless I <code>make clean</code>.</li>
+  <li><strong><em>Small programs that do small things:</em></strong> instead of one monolithic program, there are 4 independent programs that perform the work: <code>curl</code>, <code>validate_response</code>, <code>munge_response</code>, and <code>copy_response_to_db</code>. This modular system is more debuggable and and robust than a single program that does everything.</li>
+  <li><strong><em>Free parallelization where available:</em></strong> since the workflow is a linear dependency chain, <code>make</code> can't parallelize it. However, if there were another step that only depended on <code>munged_response.json</code>, say, <code>publish_munged_response</code>, <code>make</code> would be able to parallelize <code>publish_munged_response</code> and <code>update_database</code>, as they are not linearly dependent on one another.</li>
+</ul>
+
+
+<p>I could have used a pretty standard pipeline to solve this problem, for example:
+
+<pre>
+curl http://api.company.com/endpoint | validate_response | munge_response | copy_response_to_db
+</pre>
+
+But that would not satisfy the "pick up where you left off" requirement without some Aristocrats joke within each of the processing programs to track state, and pipelines are linear - it's hard to get the free parallelization without doing some shameful things.
+<br/><br/>
+Feels good, man.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

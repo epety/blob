@@ -1,0 +1,10 @@
+--- 
+layout: post
+title: JavaFX Native Look and Feel
+mt_id: 20
+---
+I have been toying around with JavaFX, Sun's answer to Adobe AIR and Microsoft Silverlight.&nbsp; Since JavaFX is pretty much an easy way to do Swing, you can get Swing's pluggable look and feel in Java FX programs.&nbsp; Thank Christ, because the Swing UI components look like shit:<br /><br /><img alt="demo-swing.png" src="/images/demo-swing.png" class="mt-image-center" style="margin: 0pt auto 20px; text-align: center; display: block;" height="90" width="512" /><br /> <div>Versus the GTK look and feel:<br /><br /><img alt="demo-gtk.png" src="/images/demo-gtk.png" class="mt-image-center" style="margin: 0pt auto 20px; text-align: center; display: block;" height="94" width="477" /><br />This was done by adding the following snippet to my JavaFX code:<br /><br /></div><pre><code>
+import javax.swing.UIManager;
+ 
+ UIManager.setLookAndFeel(
+            UIManager.getSystemLookAndFeelClassName()); </code></pre><br />Oh neat, native UI components. 

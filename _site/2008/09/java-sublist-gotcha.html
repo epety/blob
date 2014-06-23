@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Java subList Gotcha</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Java subList Gotcha</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, September 13, 2008
+  </div>
+
+  <div class="post-content"><img alt="yogi.jpg" src="/teddziuba/images/yogi.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="240" width="320" /> <div>Don't ever try to do anything sneaky when you're programming.&nbsp; It will always bite you in the ass.&nbsp; If you still want to be sneaky, read the documentation.<br /><br />Last week, we had a problem with one of our processes hanging and burning 100% CPU.&nbsp; The first time it happened we chalked it up to mysteries of the universe and restarted the process (a time-honored startup tradition), but the second time, I actually got off my ass and investigated.<br /><br />Through the miracle of <code>jstack</code>, I could look at the stack trace of a currently running Java process.&nbsp; This is what I found:<br /><br /><br /><br /></div>
+
+<pre>"main" prio=10 tid=0x0a030800 nid=0x10a6 runnable [0xb7d7d000..0xb7d82218]
+   java.lang.Thread.State: RUNNABLE
+     at java.util.SubList$1.nextIndex(AbstractList.java:713)
+     at java.util.SubList$1.nextIndex(AbstractList.java:713)
+
+...snip... about 100 lines
+
+     at java.util.SubList$1.hasNext(AbstractList.java:691)
+     at java.util.SubList$1.next(AbstractList.java:695)
+     at java.util.SubList$1.next(AbstractList.java:696)
+
+...snip... about 100 lines
+
+     at com.pressflip.pipeline.standard.deduper.ShingleDupeDetector.<br />        dedupBatch(ShingleDupeDetector.java:139)
+     at com.pressflip.pipeline.standard.deduper.DeduperPipelineStep.<br />        innerProcess(DeduperPipelineStep.java:115)
+
+... and right down to the main() from here.<br /></pre>
+
+<p>The suspect line in all this is ShingleDupeDetector.java:139, which is one of those <i>how-the-hell-are-you-hanging-on-this</i> lines:</p>
+
+<pre>for (Integer x : someCollectionOfIntegers) {
+</pre>
+
+<p>So what the shit, right?</p><p>I was using this collection as a cache of sorts, where on every run, I chopped some data off the front of it and added some data to the back, keeping the collection size constant.&nbsp; To accomplish this, I used the <code>subList</code> method on <code>java.util.List</code>, something like this:</p><p><br /></p>
+<pre>someCollectionOfIntegers = someCollectionOfIntegers.subList(fromIndex,
+                                                    someCollectionOfIntegers.size());
+someCollectionOfIntegers.addAll(incoming);
+</pre>
+
+<p>Well it turns out that <code>subList</code> didn't do what I thought it did.&nbsp; I assumed that I just got a new <code>List</code> that contained the elements in the given range of the original.&nbsp; Oh no, <code>subList</code> returns a <i>view</i> of the original list where only elements in the given range are addressable.&nbsp; A look at <code>AbstractList.java</code>'s source reveals this:</p>
+
+<pre> 
+public List&lt;E&gt; subList(int fromIndex, int toIndex) {
+        return new SubList&lt;E&gt;(this, fromIndex, toIndex);
+}
+</pre>
+
+<p>And the <code>SubList</code> object keeps a reference to <code>this</code>, as well as an offset to know where iteration starts, so as I updated the "cache", iterating over it became recursive.&nbsp; Oh, balls.&nbsp; That's why it's running slow.<br /></p> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

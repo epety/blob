@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Node.js is Cancer</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Node.js is Cancer</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, October 01, 2011
+  </div>
+
+  <div class="post-content"><p>
+<img class="post-lead-image" src="/teddziuba/images/a-toddler-is-like-a-raccoon-that-knows-how-to-lie.jpg">
+If there's one thing web developers love, it's knowing better than conventional wisdom, but conventional wisdom is conventional for a reason: <em><strong>that shit works</strong></em>. Something's been bothering me for a while about this node.js nonsense, but I never took the time to figure it out until I read this <a href="https://plus.google.com/115094562986465477143/posts/Di6RwCNKCrf" rel="nofollow">butthurt post</a> from Ryan Dahl, Node's creator. I was going to shrug it off as just another jackass who whines because Unix is hard. But, like a police officer who senses that something isn't quite right about the family in a minivan he just pulled over and discovers fifty kilos of black horse heroin in the back, I thought that something <em>wasn't quite right</em> about this guy's aw-shucks sob story, and that maybe, just maybe, he has no idea what he is doing, and has been writing code unchecked for years.
+</p>
+
+<p>Since you're reading about it here, you probably know how my hunch turned out.</p>
+
+<p>Node.js is a tumor on the programming community, in that not only is it completely braindead, but the people who use it go on to infect other people who can't think for themselves, until eventually, every asshole I run into wants to tell me the gospel of event loops. <em>Have you accepted epoll into your heart?</em>
+</p>
+
+<h3>A Scalability Disaster Waiting to Happen</h3>
+<p>Let's start with the most horrifying lie: that node.js is scalable because it "never blocks" <em>(Radiation is good for you! We'll <a href="http://www.orau.org/ptp/collection/quackcures/toothpaste.htm">put it in your toothpaste!</a>)</em>. On the Node home page, they say this:
+
+
+<blockquote>
+Almost no function in Node directly performs I/O, so the process never blocks. Because nothing blocks, less-than-expert programmers are able to develop fast systems.
+</blockquote>
+
+This statement is enticing, encouraging, and completely fucking wrong.</p>
+
+<p>Let's start with a definition, because you Reddit know-it-alls keep your specifics in the pedantry. A function call is said to <strong>block</strong> when the current thread of execution's flow waits until that function is finished before continuing. Typically, we think of I/O as "blocking", for example, if you are calling <code>socket.read()</code>, the program will wait for that call to finish before continuing, as you need to do something with the return value.</p>
+
+<p>Here's a fun fact: every function call that does CPU work also blocks. This function, which calculates the n'th Fibonacci number, will block the current thread of execution because it's using the CPU.
+
+<div class="highlight"><pre><code class="js"><span class="kd">function</span> <span class="nx">fibonacci</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">else</span>
+    <span class="k">return</span> <span class="nx">fibonacci</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fibonacci</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+<em>(Yes, I know there's a closed form solution. Shouldn't you be in front of a mirror somewhere, figuring out how to introduce yourself to her?.)</em></p>
+
+<p>Let's see what happens to a node.js program that has this little gem as its request handler:</p>
+
+<div class="highlight"><pre><code class="js"><span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">});</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="nx">fibonacci</span><span class="p">(</span><span class="mi">40</span><span class="p">));</span>
+<span class="p">}).</span><span class="nx">listen</span><span class="p">(</span><span class="mi">1337</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">);</span>
+</code></pre>
+</div>
+
+
+<p>
+On my older laptop, this is the result:
+
+<div class="highlight"><pre><code class="console"><span class="gp">ted@lorenz:~$</span> <span class="nb">time </span>curl http://localhost:1337/
+<span class="go">165580141</span>
+<span class="go">real	0m5.676s</span>
+<span class="go">user	0m0.010s</span>
+<span class="go">sys	0m0.000s</span>
+</code></pre>
+</div>
+
+
+5 second response time. Cool. So we all know JavaScript isn't a terribly fast language, but why is this such an indictment? It's because Node's evented model and brain damaged fanboys make you think everything is OK. In really abusive pseudocode, this is how an event loop works:
+</p>
+
+<div class="highlight"><pre><code class="cpp"><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">ready_file_descriptor</span> <span class="o">=</span> <span class="n">event_library</span><span class="o">-&gt;</span><span class="n">poll</span><span class="p">();</span>
+  <span class="n">handle_request</span><span class="p">(</span><span class="n">ready_file_descriptor</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+<p>
+That's all well and good if you know what you're doing, but when you apply this to a server problem, you've pluralized that shit. If this loop is running in the same thread that <code>handle_request</code> is in, any programmer with a pulse will notice that <em>the request handler can hold up the event loop</em>, no matter how asynchronous your library is.</p>
+
+<p>So, given that, let's see how my little node server behaves under the most modest load, 10 requests, 5 concurrent:
+
+<div class="highlight"><pre><code class="console"><span class="gp">ted@lorenz:~$</span> ab -n 10 -c 5 http://localhost:1337/
+<span class="go">...</span>
+<span class="go">Requests per second:    0.17 [#/sec] (mean)</span>
+<span class="go">...</span>
+</code></pre>
+</div>
+
+
+
+<em>0.17 queries per second</em>. Diesel. Sure, Node allows you to fork child processes, but at that point your threading/event model is so tightly coupled that you've got bigger problems than scalability.</p>
+
+<p>Considering Node's original selling point, I'm God Damned terrified of any "fast systems" that "less-than-expert programmers" bring into this world.</p>
+
+<h3>Node Punishes Developers Because it Disobeys the Unix Way</h3>
+
+<p>A long time ago, the original neckbeards decided that it was a good idea to chain together small programs that each performed a specific task, and that the universal interface between them should be text.</p>
+
+<p>If you develop on a Unix platform and you abide by this principle, the operating system will reward you with simplicity and prosperity. As an example, when web applications first began, the <em>web application</em> was just a program that printed text to standard output. The <em>web server</em> was responsible for taking incoming requests, executing this program, and returning the result to the requester. We called this CGI, and it was a good way to do business until the micro-optimizers sank their grubby meathooks into it.</p>
+
+<p>Conceptually, this is how any web application architecture that's not cancer still works today: you have a web server program that's job is to accept incoming requests, parse them, and figure out the appropriate action to take. That can be either serving a static file, running a CGI script, proxying the connection somewhere else, whatever. The point is that the HTTP server isn't the same entity doing the application work. Developers who have been around the block call this <em>separation of responsibility</em>, and it exists for a reason: loosely coupled architectures are very easy to maintain.</p>
+
+<p>And yet, Node seems oblivious to this. Node has (and don't laugh, I am not making this shit up) its own HTTP server, <em>and that's what you're supposed use to serve production traffic</em>. Yeah, that example above when I called <code>http.createServer()</code>, that's the preferred setup.</p>
+
+<p>If you search around for "node.js deployment", you find a bunch of people putting Nginx in front of Node, and some people use a thing called Fugue, which is another JavaScript HTTP server that forks a bunch of processes to handle incoming requests, as if somebody maybe thought that this "nonblocking" snake oil might have an issue with CPU-bound performance.</p>
+
+<p>If you're using Node, there's a 99% probability that you are both the developer and the system administrator, because any system administrator would have talked you out of using Node in the first place. So you, the developer, must face the punishment of setting up this HTTP proxying orgy if you want to put a real web server in front of Node for things like serving statics, query rewriting, rate limiting, load balancing, SSL, or any of the other futuristic things that modern HTTP servers can do. That, and it's another layer of health checks that your system will need.</p>
+
+<p>Although, let's be honest with ourselves here, if you're a Node developer, you are probably serving the application directly from Node, running in a screen session under your account.</p>
+
+<h3>It's Fucking <em>JavaScript</em></h3>
+
+<p>This is probably the worst thing any server-side framework can do: be written in JavaScript.
+
+<div class="highlight"><pre><code class="js"><span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">my_var</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">my_var</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// you idiots put Rasmus Lerdorf to shame</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+What is this I don't even...
+</p>
+
+<h3>tl;dr</h3>
+<p>Node.js is an unpleasant software library and I will not use it.</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

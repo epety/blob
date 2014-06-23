@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>Multiple Concurrent Linux Distributions</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">Multiple Concurrent Linux Distributions</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, January 01, 2011
+  </div>
+
+  <div class="post-content"><p><img class="post-lead-image" src="/teddziuba/images/sometimes-all-you-need-is-a-solid-puke-to-set-yourself-right.png">
+You can run multiple Linux distributions at the same time, on the same computer, without a virtual machine. Milo's production environment is a mix of Ubuntu Hardy and Lucid, while eBay's production Linux is Red Hat. Eventually, this will all converge on one environment, but in the mean time while we port, we need a way to rapidly iterate changes on a handful of Linux distributions. A virtual machine seems like the obvious answer, but that's overkill for this situation.
+</p>
+
+<p>A Linux distribution is a kernel, some libraries, binaries, and a package manager. The kernel is the lowest level of abstraction over the hardware; everything else is fairly interchangeable. Apache running on Red Hat will make the same system calls as Apache running on Ubuntu. In theory, as long as shared library paths are managed correctly and the package managers don't trample on each other, you can have multiple distributions "running" under one kernel, no virtual machine needed.</p>
+
+<p>Unix provides the <code>chroot</code> mechanism to keep all of the distribution files in order. There are some tools that build on <code>chroot</code> to support these virtual environments so that you don't have to do any bookkeeping or stupid shit with <code>/dev</code> or <code>/proc</code>. I am using Ubuntu as my "host" operating system, and a Debian tool called <code>schroot</code> to manage it all.</p>
+
+<h3>Ubuntu In Ubuntu</h3>
+<p>I use Ubuntu Maverick as my desktop operating system, while production uses either Hardy or Lucid because they are long-term support releases. Here's how you install one Ubuntu distribution within another:</p>
+
+<p>
+  <ol>
+  <li><code>sudo apt-get install debootstrap schroot</code></li>
+  <li><code>sudo mkdir -p /var/chroot/lucid</code></li>
+  <li><code>sudo debootstrap --variant=buildd --arch [amd64|i386] lucid /var/chroot/lucid http://archive.ubuntu.com/ubuntu/</code></li>
+  </ol>
+
+Now open up <code>/etc/schroot/schroot.conf</code> in a text editor and add a configuration stanza that looks like this:
+
+<blockquote>
+<pre>
+[lucid]
+directory=/var/chroot/lucid
+description=Ubuntu Lucid
+root-users=root,ted
+users=ted
+type=directory
+</pre>
+</blockquote>
+
+In practice this can be any Ubuntu release you want, just change the argument to <code>debootstrap</code> and your configurations accordingly. I have one stanza for Lucid and one for Hardy, but you can have as many as you've got disk space for.</p>
+
+<p>Now you can use your virtual environment with <code>schroot -c lucid</code>:</p>
+
+<p>
+<blockquote>
+<pre>
+ted@duke:~$ lsb_release -dc
+Description:	Ubuntu 10.10
+Codename:	maverick
+ted@duke:~$ schroot -c lucid
+(lucid)ted@duke:~$ lsb_release -dc
+Description:	Ubuntu 10.04 LTS
+Codename:	lucid
+(lucid)ted@duke:~$
+</pre>
+</blockquote>
+
+At this point you should probably <code>apt-get install ubuntu-minimal</code> as <code>debootstrap</code> doesn't install a whole lot.
+</p>
+
+<p>Neat.</p>
+
+<h3>Red Hat in Ubuntu</h3>
+
+<p>Now that we've got ourselves bothered with <code>schroot</code>, let's make it jump. Installing Red Hat in a <code>chroot</code> environment is going to be tricker because we don't have <code>debootstrap</code>, which is a Debian tool for bootstrapping an installation. Fortunately, some enterprising programmer has unfucked the Red Hat bootstrap system with a utility called <code>rinse</code>.</p>
+
+<p>
+<ol>
+  <li><code>sudo apt-get install rinse</code></li>
+  <li><code>sudo mkdir -p /var/chroot/centos</code></li>
+  <li><code>sudo rinse --distribution centos-5 --arch [amd64|i386] --directory /var/chroot/centos</code></li>
+</ol>
+
+If CentOS isn't your game, there are others to choose from. Run <code>rinse --list-distributions</code> to see what is available.
+</p>
+
+<p>Add a <code>schroot.conf</code> stanza for Red Hat like so:
+
+<blockquote>
+<pre>
+[centos]
+description=CentOS 5 amd64
+directory=/var/chroot/centos
+root-users=root,ted
+users=ted
+type=directory
+</pre>
+</blockquote>
+
+And now I can jump into CentOS 5 with <code>schroot -c centos</code>, and I'll prove it, too:
+
+<blockquote>
+<pre>
+ted@duke:~$ schroot -c centos
+(centos)ted@duke:~$ lsb_release -dc
+Description:	CentOS release 5.5 (Final)
+Codename:	Final
+</pre>
+</blockquote>
+
+Of course, CentOS uses RPM and some derelict dependency manager called yum. You will have to <code>yum install lsb</code> to get the Linux Standard Base.
+</p>
+
+<h3>This is Not Virtualization</h3>
+
+<p>If you're asking yourself how you can get a private network interface for a chroot environment, then you've got to take a little more time to understand the problem we are solving. When I first started digging into this, my goal was to be able to run flymake in a hermetic environment. Just the tip, just for a little bit, just to see how it feels. And look where it lead.</p>
+
+<p>This doesn't solve a whole lot of production problems, in fact, it will probably create more than it solves. If you're interested in chrooting your way out of a jam in production, check out FreeBSD jails. This trick is useful for development, when you need to target more than one Linux distribution, or you want a clean environment to test in without booting up a VM.</p>
+
+<p>Ain't Unix grand?</p>
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>

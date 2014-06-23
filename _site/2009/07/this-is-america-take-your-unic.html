@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Jekyll">
+  <title>This Is America, Take Your Unicode Somewhere Else</title>
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/reset.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/text.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/960.css" />
+  <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/custom.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/teddziuba/css/pygments.css">
+
+</head>
+
+<body>
+<div id="top-bar">
+  <div id="top-container" class="container_12">
+    <div id="header" class="grid_10 alpha omega">
+      <h1 id="blog-name"><a href="/teddziuba/">Ted Dziuba</a></h1>
+    </div>
+  </div>
+</div>
+
+<div id="container" class="container_16">
+  <div id="content" class="grid_12 alpha">
+    <div class="post-container">
+  <h2 class="post-title"><a href="">This Is America, Take Your Unicode Somewhere Else</a></h2>
+  <div class="byline">
+    by Ted Dziuba on Saturday, July 04, 2009
+  </div>
+
+  <div class="post-content"><img alt="i-only-listen-to-NPR-so-i-can-keep-an-eye-on-what-educated-people-are-up-to-its-merely-an-early-warning-system.jpg" src="/teddziuba/images/i-only-listen-to-NPR-so-i-can-keep-an-eye-on-what-educated-people-are-up-to-its-merely-an-early-warning-system.jpg" class="post-lead-image" style="margin: 0pt 0pt 20px 20px; float: right;" height="245" width="320" />There's a question that comes up on Stack Overflow every couple of months: "How do I strip diacritic marks from Unicode characters?".&nbsp; Popular variants include "How do I remove special characters" and "How do I convert Unicode to ASCII", but the underlying motivation is the same: characters that don't have their own key on an American keyboard have no place in modern web software. <div><br />Before you go all apeshit on me and call me a bigot and whatnot, read my story.&nbsp; When I was in college, Google hired me for a summer internship.&nbsp; One of my projects that summer was to write Google's employee directory search.&nbsp; Google, as I'm sure you could imagine, is a very multicultural employer.&nbsp; Googlers in general are very accepting of different cultures, customs, and languages.&nbsp; (Well, sort of.&nbsp; Googlers are accepting of multicultural differences like sushi, Diwali parties, and the word <i>namaste</i>.&nbsp; They're not accepting of cultural differences like Old English 800, 22 inch rims, and the word <i>juicy</i>. The general rule I figured out as a Googler is that you should welcome diversity so long as it doesn't make you feel guilty for making ten times as much money.)<br /><br />Anyhow, as a result of pulling in a lot of foreign talent, my employee directory search had to handle UTF-8 properly.&nbsp; A lot of peoples' names had umlauts, tildes, and other such little nuggets that love to appear as diamonds with question marks in them. I figured, just make the database UTF-8, page encoding UTF-8, and everything should work fine, right?&nbsp; Well it did, in theory.&nbsp; But when the first super-tolerant Googler typed his colleague's name into my search engine, it didn't come up.&nbsp; There was an o with an umlaut in the name, but our hero of race relations simply typed "o".<br /><br />And that came through to me as a bug report.&nbsp; "Strip funny characters." So I did, and how the searches flowed.&nbsp; See if you can guess how many people would input diacritic marks into the search box.<br /><br />Googlers are some of the most understanding people out there, and if they can't be bothered to type Alt-148 for an o with an umlaut, then what hope does the rest of the software industry have?&nbsp; None.&nbsp; That's why I want to systematically dismantle Unicode, and have a good answer to the question "How do I strip diacritic marks?".&nbsp; Not because handling multibyte character sets is too hard (although that asspain is what prompted me to think about this in the first place), but rather because only a small minority of people actually care about it, and an even smaller minority will whine when their umlauts disappear.<br /><br />(To satisfy the pedants, clearly if you're writing software whose job it is to handle and store UTF-8, this advice isn't for you.&nbsp; I'm talking about web services with user input here.)<br /><br />Now, you can feel free to take an idealist approach to this problem.&nbsp; Yes, Americans should be more accepting of other cultures and not passively destroy intricate details of pronunciation.&nbsp; Well, feel free to enjoy your floating-point market share.&nbsp; Nobody cares but you.<br /><br /><b>End Note</b><br />I found two decent implementations of Unicode transliteration, one in Python and one in Perl. If you know of good implementations in other languages, e-mail me and I'll add them to this list, with SEO-friendly anchor text goodness.<br /><br /><ul><li><a href="http://www.tablix.org/%7Eavian/blog/archives/2009/01/unicode_transliteration_in_python/">Strip diacritic marks in Python</a></li><li><a href="http://search.cpan.org/%7Esburke/Text-Unidecode-0.04/lib/Text/Unidecode.pm">Strip diacritic marks in Perl</a></li><li><a href="http://www.rgagnon.com/javadetails/java-0456.html">Strip diacritic marks in Java</a> (thanks to Simon Lieschke)<br /></li><li><a href="http://dev.alt.textdrive.com/browser/HTTP/Unidecode.lua">Strip diacritic marks in Lua</a> (for all 8 of you who use it. Thanks to Petite Abeille)</li><li><a href="http://blargh.tommymontgomery.com/2009/08/transliteration-in-php/">Strip diacritic marks in PHP</a> (thanks to Tommy Montgomery)</li></ul></div> 
+</div>
+</div>
+
+  </div>
+
+
+  <div id="sidebar" class="grid_3 omega">
+    <h3>More</h3>
+    <ul>
+      <li><a href="/teddziuba/archives.html">All Posts</a></li>
+      <li><a href="/teddziuba/atom2.xml">Atom Feed</a></li>
+    </ul>
+
+    <h3>Contact</h3>
+    <ul>
+      <li><a href="http://www.twitter.com/dozba">Twitter</a></li>
+      <li><a href="http://www.linkedin.com/in/teddziuba">LinkedIn</a></li>
+      <li><a href="http://www.reddit.com/user/tjdziuba/">Reddit</a></li>
+      <li><a href="mailto:tjdziuba@gmail.com">tjdziuba@gmail.com</a></li>
+    </ul>
+
+  </div>
+
+</div>
+
+</body>
+</html>
